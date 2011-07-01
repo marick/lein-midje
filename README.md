@@ -9,19 +9,21 @@ Installation
 
       $ lein plugin install lein-midje 1.0.0
 
+Or you can include it in your `project.clj`
+
+      :dev-dependencies [[lein-midje "1.0.0-SNAPSHOT"]])
+
+
+Use
 ==========
 
-    $ lein midje leiningen-midje.t-core
-    FAIL for (t_core.clj:10)
-    You claimed the following was needed, but it was never used:
-    (g 1)
-    FAIL at (t_core.clj:8)
-    Expected: 1
-      Actual: nil
-    FAILURE: 2 facts were not confirmed. 
+To run all the tests, and check all the facts, in both the
+`test` and `src` directories, type this:
 
-(Notice that a single `fact` statement is counted as containing two unconfirmed facts: one that the function-under-test didn't return the right value, and the other that it doesn't use a prerequisite fact you claimed it required.)
+      $ lein midje 
 
-If, as I do, you like using facts as annotations in your source code, you'll be happy to know that `lein midje` also checks any facts in the `src` directory.
+You can also run individual namespaces by adding them to the
+command line:
 
-If your tests also contain `clojure.test` deftests, they'll be run, you'll get detailed failure information, and the end of the output will show the usual `clojure.test` summary. It'll be separate from the Midje summary because Midje doesn't make the same distinctions as `clojure.test` does (between errors and failures and between checks and tests).
+      $ lein midje life.core life.timecop
+
