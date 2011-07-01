@@ -9,7 +9,7 @@ Installation
 
       $ lein plugin install lein-midje 1.0.0
 
-Or you can include it in your `project.clj`
+Or you can include it in your `project.clj`:
 
       :dev-dependencies [[lein-midje "1.0.0-SNAPSHOT"]])
 
