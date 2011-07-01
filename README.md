@@ -11,7 +11,7 @@ Installation
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.0-SNAPSHOT"]])
+      :dev-dependencies [[lein-midje "1.0.0"]])
 
 
 Use
