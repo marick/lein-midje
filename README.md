@@ -1,6 +1,7 @@
 This plugin runs both
 [Midje](https://github.com/marick/Midje) and clojure.test
-tests.
+tests. It has been tested with Leiningen 1.6.0.
+
 
 Installation
 ==========
@@ -27,4 +28,3 @@ command line:
 
       $ lein midje life.core life.timecop
 
-This has been tested with Leiningen 1.6.0.
