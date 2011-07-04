@@ -8,11 +8,11 @@ Installation
 
 `lein-midje` is available as a plugin:
 
-      $ lein plugin install lein-midje 1.0.1
+      $ lein plugin install lein-midje 1.0.2
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.1"]])
+      :dev-dependencies [[lein-midje "1.0.2"]])
 
 
 Use
