@@ -4,16 +4,29 @@
   (:refer-clojure :exclude [test])
   (:use [leiningen.util.ns :only [namespaces-in-dir]]
         [leiningen.test :only [*exit-after-tests*]]
-        [leiningen.compile :only [eval-in-project]]))
+        [leiningen.compile :only [eval-in-project]]
+        [clojure.set :only [difference]]))
 
 (defn require-namespaces-form [namespaces]
   `(do
      ;; This turns off "Testing ...." lines, which I hate, especially
-     ;; when there's no failure output.
-     (defmethod clojure.test/report :begin-test-ns [m#])
+     ;; when there's no failure output. The type check is because
+     ;; `lein test` overrides clojure.test/report with a non-multimethod.
+     (when (= clojure.lang.MultiFn (type clojure.test/report))
+       (defmethod clojure.test/report :begin-test-ns [m#]))
 
      (alter-var-root (var clojure.test/*report-counters*)
 		     (fn [_#] (ref clojure.test/*initial-report-counters*)))
+
+     ;; One style of using Midje to test a namespace is to have certain facts
+     ;; in a test/... file and facts you're working on now in the corresponding
+     ;; src/... file. We need to reload files, but in the above situation, both
+     ;; the test/... and src/... file would be in the list of namespaces to reload.
+     ;; Since the test/... file loads the source, we can't use :reload as a
+     ;; `require` argument because then the src/... file would be loaded twice, 
+     ;; which would check the facts twice, which is confusing. The following, I
+     ;; hope, loads each file at most once. 
+     (dosync (alter @#'clojure.core/*loaded-libs* difference (set '~namespaces)))
      (doseq [n# '~namespaces] (require n#))
 
      (let [midje-passes#    (:pass @clojure.test/*report-counters*)
