@@ -7,11 +7,11 @@ Installation
 
 `lein-midje` is available as a plugin:
 
-      $ lein plugin install lein-midje 1.0.0
+      $ lein plugin install lein-midje 1.0.1
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.0"]])
+      :dev-dependencies [[lein-midje "1.0.1"]])
 
 
 Use
@@ -27,3 +27,4 @@ command line:
 
       $ lein midje life.core life.timecop
 
+This has been tested with Leiningen 1.6.0.
