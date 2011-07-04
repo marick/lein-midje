@@ -8,9 +8,6 @@
 
 (defn require-namespaces-form [namespaces]
   `(do
-     (require 'clojure.test)
-     (require 'clojure.string)
-
      ;; This turns off "Testing ...." lines, which I hate, especially
      ;; when there's no failure output.
      (defmethod clojure.test/report :begin-test-ns [m#])
@@ -69,4 +66,10 @@
                               (concat (namespaces-in-dir (:test-path project))
                                       (namespaces-in-dir (:source-path project)))
                               (map symbol namespaces))]
-    (eval-in-project project (require-namespaces-form desired-namespaces))))
+    (eval-in-project project
+                     (require-namespaces-form desired-namespaces)
+                     nil
+                     nil
+                     '(do (require 'clojure.test)
+                          (require 'clojure.string)))))
+                     
