@@ -75,6 +75,7 @@
                          (:fail clojure-test-result#)))))))
 
 (defn midje [project & namespaces]
+  "Run both Midje and clojure.test tests."
   (let [desired-namespaces  (if (empty? namespaces)
                               (concat (namespaces-in-dir (:test-path project))
                                       (namespaces-in-dir (:source-path project)))
