@@ -84,6 +84,5 @@
                      (require-namespaces-form desired-namespaces)
                      nil
                      nil
-                     '(do (require 'clojure.test)
-                          (require 'clojure.string)))))
+                     '(require '[clojure walk template stacktrace test string]))))
                      
