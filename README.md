@@ -8,11 +8,11 @@ Installation
 
 `lein-midje` is available as a plugin:
 
-      $ lein plugin install lein-midje 1.0.3
+      $ lein plugin install lein-midje 1.0.4
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.3"]])
+      :dev-dependencies [[lein-midje "1.0.4"]])
 
 
 Use
@@ -28,3 +28,8 @@ command line:
 
       $ lein midje life.core life.timecop
 
+Contributors
+==========
+
+Andreas Wurzer
+Brian Marick
