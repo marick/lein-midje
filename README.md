@@ -1,6 +1,7 @@
 This plugin runs both
 [Midje](https://github.com/marick/Midje) and clojure.test
-tests. It has been tested with Leiningen 1.5.2 and 1.6.1.
+tests. It has been tested with Leiningen 1.5.2 and 1.6.1. It
+works with Clojure 1.2.0, 1.2.1, and 1.3.0.
 
 
 Installation
@@ -9,6 +10,9 @@ Installation
 `lein-midje` is available as a plugin:
 
       $ lein plugin install lein-midje 1.0.4
+
+[Note: for reasons unknown, you may need to first uninstall
+earlier versions.]
 
 Or you can include it in your `project.clj`:
 
