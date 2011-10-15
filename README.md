@@ -35,5 +35,5 @@ command line:
 Contributors
 ==========
 
-Andreas Wurzer
-Brian Marick
+* Andreas Wurzer
+* Brian Marick
