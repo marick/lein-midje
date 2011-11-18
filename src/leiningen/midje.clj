@@ -29,7 +29,13 @@
      (dosync (alter @#'clojure.core/*loaded-libs* difference (set '~namespaces)))
      (doseq [n# '~namespaces] (require n#))
 
-     (let [midje-passes# (:pass @clojure.test/*report-counters*)
+     (let [midje-colorize# (fn [colorize-fn#]
+                             (let [colorize-env-var# (System/getenv "MIDJE_COLORIZE")]
+                               (if (or (nil? colorize-env-var#) (Boolean/valueOf colorize-env-var#))
+                                 colorize-fn#
+                                 identity)))
+           green# (midje-colorize# (fn [s#] (str "\u001b[32m" s# "\u001b[0m")))
+           midje-passes# (:pass @clojure.test/*report-counters*)
            midje-fails# (:fail @clojure.test/*report-counters*)
            midje-failure-message# (condp = midje-fails#
                                     0 (format "All claimed facts (%d) have been confirmed." midje-passes#)
@@ -55,13 +61,14 @@
                0)
          ;; For some reason, empty lines are swallowed, so I use >>> to
          ;; demarcate sections.
-         (println ">>> Output from clojure.test tests:")
+
+       (println (green# ">>> Output from clojure.test tests:"))
          (dorun (map println (drop-last 2 clojure-test-output#))))
 
        (when (> (:test clojure-test-result#) 0)
-         (println ">>> clojure.test summary:")
+         (println (green# ">>> clojure.test summary:"))
          (dorun (map println (take-last 2 clojure-test-output#)))
-         (println ">>> Midje summary:"))
+         (println (green# ">>> Midje summary:")))
 
        (println midje-failure-message# midje-consolation#)
 
