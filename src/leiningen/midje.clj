@@ -77,8 +77,7 @@
   If no namespaces are given, runs tests in all namespaces."
   [project & namespaces]
   (let [desired-namespaces (if (empty? namespaces)
-                             (concat (namespaces-in-dir (:test-path project))
-                                     (namespaces-in-dir (:source-path project)))
+                             (mapcat namespaces-in-dir [(:test-path project) (:source-path project)])
                              (map symbol namespaces))]
     (eval-in-project 
       project
