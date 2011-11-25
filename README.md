@@ -37,3 +37,4 @@ Contributors
 
 * Andreas Wurzer
 * Brian Marick
+* Alex Baranosky
