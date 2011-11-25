@@ -1,6 +1,6 @@
 This plugin runs both
 [Midje](https://github.com/marick/Midje) and clojure.test
-tests. It has been tested with Leiningen 1.5.2 and 1.6.1. It
+tests. It has been tested with Leiningen 1.5.2, 1.6.1, and 1.6.2. It
 works with Clojure 1.2.0, 1.2.1, and 1.3.0.
 
 
