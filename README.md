@@ -32,8 +32,17 @@ command line:
 
       $ lein midje life.core life.timecop
 
+As of lein-midje 1.0.5, you can use a wildcard to specify
+a subset of namespaces:
+
+       $ lein midje 'midje.ideas.*'
+
+This will run all the tests in that namespace and ones
+recursively included within it.
+
 Contributors
 ==========
 
 * Andreas Wurzer
 * Brian Marick
+* dnaumov
