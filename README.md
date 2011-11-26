@@ -9,7 +9,8 @@ Installation
 
 `lein-midje` is available as a plugin:
 
-      $ lein plugin install lein-midje 1.0.4
+      $ lein plugin install lein-midje 1.0.4       # Stable version
+      $ lein plugin install lein-midje 1.0.5       # Experimental version
 
 [Note: for reasons unknown, you may need to first uninstall
 earlier versions.]
@@ -40,9 +41,15 @@ a subset of namespaces:
 This will run all the tests in that namespace and ones
 recursively included within it.
 
+To run `lein-midje` as a watcher process that reloads any
+changed test files, use this:
+
+       $ lein midje --lazytest
+
 Contributors
 ==========
 
+* Alex Baranosky
 * Andreas Wurzer
 * Brian Marick
 * dnaumov
