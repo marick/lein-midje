@@ -46,6 +46,8 @@ changed test files, use this:
 
        $ lein midje --lazytest
 
+This requires that the lazytest dependency be included in your project.
+
 Contributors
 ==========
 

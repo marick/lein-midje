@@ -81,11 +81,11 @@
                         (:fail clojure-test-result#)))))
 ))
 
-(defn- get-namespaces [coll]
-  (flatten (map #(if (= \* (last %))
-                   (namespaces-matching (.substring % 0 (dec (count %))))
-                   (symbol %))
-                coll)))
+(defn- get-namespaces [namespaces]
+  (mapcat #(if (= \* (last %))
+             (namespaces-matching (apply str (butlast %)))
+             [(symbol %)])
+    namespaces))
 
 (defn midje
   "Runs both Midje and clojure.test tests.
@@ -97,6 +97,7 @@
   
   `lein midje ns1 ns2 ns3`
   Namespaces are looked up in both :source-path and :test-path.
+  Supports simple wildcards i.e. `lein midje ns.*` to use all subnamespaces of ns
   
   `lein midje --lazytest`
   Runs tests in all :source-path and :test-path namespaces.  
