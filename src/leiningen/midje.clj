@@ -2,7 +2,7 @@
 
 (ns leiningen.midje
   (:refer-clojure :exclude [test])
-  (:use [leiningen.util.ns :only [namespaces-in-dir]]
+  (:use [leiningen.util.ns :only [namespaces-in-dir namespaces-matching]]
         [leiningen.test :only [*exit-after-tests*]]
         [leiningen.compile :only [eval-in-project]]
         [clojure.set :only [difference]]))
@@ -81,6 +81,12 @@
                         (:fail clojure-test-result#)))))
 ))
 
+(defn- get-namespaces [coll]
+  (flatten (map #(if (= \* (last %))
+                   (namespaces-matching (.substring % 0 (dec (count %))))
+                   (symbol %))
+                coll)))
+
 (defn midje
   "Runs both Midje and clojure.test tests.
   There are three ways to use this plugin:
@@ -111,7 +117,7 @@
       (let [namespaces lazytest-or-namespaces
             desired-namespaces (if (empty? namespaces)
                                  (mapcat namespaces-in-dir paths)
-                                 (map symbol namespaces))]
+                                 (get-namespaces namespaces))]
         (eval-in-project
           project
           `(~(make-report-fn) (apply ~(make-run-fn) '~desired-namespaces))
