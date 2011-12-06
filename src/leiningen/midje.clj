@@ -36,8 +36,10 @@
            midje-fails# (:fail @clojure.test/*report-counters*)
            midje-failure-message# (condp = midje-fails#
                                       0 (color/pass (format "All claimed facts (%d) have been confirmed." midje-passes#))
-                                      1 (color/fail (format "FAILURE: %d fact was not confirmed." midje-fails#))
-                                      (color/fail (format "FAILURE: %d facts were not confirmed." midje-fails#)))
+                                      1 (str (color/fail "FAILURE:")
+                                             (format " %d fact was not confirmed." midje-fails#))
+                                      (str (color/fail "FAILURE:")
+                                           (format " %d facts were not confirmed." midje-fails#)))
 
            potential-consolation# (condp = midje-passes#
                                     0 ""
@@ -47,23 +49,25 @@
            midje-consolation# (if (> midje-fails# 0) potential-consolation# "")
 
            ; Stashed clojure.test output
-           clojure-test-output-catcher# (java.io.StringWriter.)
-           clojure-test-result# (binding [clojure.test/*test-out* clojure-test-output-catcher#]
+           ct-output-catcher# (java.io.StringWriter.)
+           ct-result# (binding [clojure.test/*test-out* ct-output-catcher#]
                                   (apply ~'clojure.test/run-tests namespaces#))
-           clojure-test-output# (-> clojure-test-output-catcher#
+           ct-output# (-> ct-output-catcher#
                                     .toString
-                                    clojure.string/split-lines)]
+                                    clojure.string/split-lines)
+           ct-failures-and-errors# (+ (:fail ct-result#) (:error ct-result#))
+           ct-some-kind-of-fail?# (> ct-failures-and-errors# 0)]
 
-       (when (> (+ (:fail clojure-test-result#) (:error clojure-test-result#))
-               0)
+       (when ct-some-kind-of-fail?#
          ;; For some reason, empty lines are swallowed, so I use >>> to
          ;; demarcate sections.
          (println (color/note ">>> Output from clojure.test tests:"))
-         (dorun (map println (drop-last 2 clojure-test-output#))))
+         (dorun (map println (drop-last 2 ct-output#))))
 
-       (when (> (:test clojure-test-result#) 0)
+       (when (> (:test ct-result#) 0)
          (println (color/note ">>> clojure.test summary:"))
-         (dorun (map println (take-last 2 clojure-test-output#)))
+         (println (first (take-last 2 ct-output#)))
+         (println ( (if ct-some-kind-of-fail?# color/fail color/pass) (last ct-output#)))
          (println (color/note ">>> Midje summary:")))
 
        (println midje-failure-message# midje-consolation#)
@@ -71,8 +75,8 @@
        ;; A non-nil return value is printed, so I'll just exit here.
        (when ~*exit-after-tests*
          (System/exit (+ midje-fails#
-                        (:error clojure-test-result#)
-                        (:fail clojure-test-result#)))))
+                        (:error ct-result#)
+                        (:fail ct-result#)))))
 ))
 
 (defn- get-namespaces [namespaces]

@@ -9,3 +9,4 @@ test/midje/scratch
 semantic.cache
 *.iml
 *.idea
+.lein-*
