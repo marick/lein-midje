@@ -32,18 +32,12 @@
 
 (defn- make-report-fn []
   `(fn [namespaces#]
-     (let [midje-colorize# (fn [colorize-fn#]
-                             (let [colorize-env-var# (System/getenv "MIDJE_COLORIZE")]
-                               (if (or (nil? colorize-env-var#) (Boolean/valueOf colorize-env-var#))
-                                 colorize-fn#
-                                 identity)))
-           green# (midje-colorize# (fn [s#] (str "\u001b[32m" s# "\u001b[0m")))
-           midje-passes# (:pass @clojure.test/*report-counters*)
+     (let [midje-passes# (:pass @clojure.test/*report-counters*)
            midje-fails# (:fail @clojure.test/*report-counters*)
            midje-failure-message# (condp = midje-fails#
-                                    0 (format "All claimed facts (%d) have been confirmed." midje-passes#)
-                                    1 (format "FAILURE: %d fact was not confirmed." midje-fails#)
-                                    (format "FAILURE: %d facts were not confirmed." midje-fails#))
+                                      0 (color/pass (format "All claimed facts (%d) have been confirmed." midje-passes#))
+                                      1 (color/fail (format "FAILURE: %d fact was not confirmed." midje-fails#))
+                                      (color/fail (format "FAILURE: %d facts were not confirmed." midje-fails#)))
 
            potential-consolation# (condp = midje-passes#
                                     0 ""
@@ -64,13 +58,13 @@
                0)
          ;; For some reason, empty lines are swallowed, so I use >>> to
          ;; demarcate sections.
-         (println (green# ">>> Output from clojure.test tests:"))
+         (println (color/note ">>> Output from clojure.test tests:"))
          (dorun (map println (drop-last 2 clojure-test-output#))))
 
        (when (> (:test clojure-test-result#) 0)
-         (println (green# ">>> clojure.test summary:"))
+         (println (color/note ">>> clojure.test summary:"))
          (dorun (map println (take-last 2 clojure-test-output#)))
-         (println (green# ">>> Midje summary:")))
+         (println (color/note ">>> Midje summary:")))
 
        (println midje-failure-message# midje-consolation#)
 
@@ -113,7 +107,9 @@
         `(lazytest.watch/start '~paths :run-fn '~(make-run-fn) :report-fn '~(make-report-fn))
         nil
         nil
-        '(require '[clojure walk template stacktrace test string set] '[lazytest watch]))
+        '(require '[clojure walk template stacktrace test string set]
+                  '[leiningen.midje-color :as color]
+                  '[lazytest watch]))
     
       (let [namespaces lazytest-or-namespaces
             desired-namespaces (if (empty? namespaces)
@@ -124,4 +120,5 @@
           `(~(make-report-fn) (apply ~(make-run-fn) '~desired-namespaces))
           nil
           nil
-          '(require '[clojure walk template stacktrace test string set]))))))
+          '(require '[clojure walk template stacktrace test string set]
+                    '[leiningen.midje-color :as color]))))))

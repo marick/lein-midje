@@ -9,15 +9,15 @@ Installation
 
 `lein-midje` is available as a plugin:
 
-      $ lein plugin install lein-midje 1.0.4       # Stable version
-      $ lein plugin install lein-midje 1.0.5       # Experimental version
+      $ lein plugin install lein-midje 1.0.5       # Stable version
+      $ lein plugin install lein-midje 1.0.6       # Experimental version
 
 [Note: for reasons unknown, you may need to first uninstall
 earlier versions.]
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.4"]])
+      :dev-dependencies [[lein-midje "1.0.6"]])
 
 
 Use
@@ -33,8 +33,7 @@ command line:
 
       $ lein midje life.core life.timecop
 
-As of lein-midje 1.0.5, you can use a wildcard to specify
-a subset of namespaces:
+You can use a wildcard to specify a subset of namespaces:
 
        $ lein midje 'midje.ideas.*'
 
@@ -46,7 +45,22 @@ changed test files, use this:
 
        $ lein midje --lazytest
 
-This requires that the lazytest dependency be included in your project.
+This requires that the lazytest dependency be included in
+your project.
+
+Environment Variables
+==============
+
+Colorizing of results is turned on by default. It can be
+turned off with
+
+      $ export MIDJE_COLORIZE=false
+
+Coloring is most readable with light text against a dark
+background. In lein-midje 1.0.6, you can switch to a scheme
+more readable with dark text against a light background:
+
+      $ export MIDJE_COLORIZE=reverse
 
 Contributors
 ==========
