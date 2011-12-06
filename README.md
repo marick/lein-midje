@@ -45,8 +45,11 @@ changed test files, use this:
 
        $ lein midje --lazytest
 
-This requires that the lazytest dependency be included in
-your project.
+This requires that the
+(lazytest)[http://clojars.org/com.intelie/lazytest]
+dependency be included in your project, as in:
+
+      [com.intelie/lazytest "1.0.0-SNAPSHOT"]]
 
 Environment Variables
 ==============
