@@ -47,7 +47,7 @@ changed test files, use this:
 
 This requires that the
 [lazytest](http://clojars.org/com.intelie/lazytest)
-dependency be included in your project, as in:
+dependency be included in your `project.clj` file, as in:
 
       [com.intelie/lazytest "1.0.0-SNAPSHOT"]]
 
