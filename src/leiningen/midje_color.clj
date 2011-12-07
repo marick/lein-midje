@@ -2,6 +2,20 @@
 
 (ns leiningen.midje-color)
 
+;;; This should use midje.util.colorize.clj, midje.util.ecosystem, and
+;;; the colorize jar, but for some reason that drags all of Clojure
+;;; 1.3 into the plugin, which is gross. I don't know why that
+;;; happens. -- bem
+
+(defn getenv [var] 
+  (System/getenv var))
+
+(defn on-windows? []
+  (re-find #"[Ww]in" (System/getProperty "os.name")))
+
+
+
+
 (declare fail pass note)
 (def reset-color "\u001b[0m")
 (def foreground-red "\u001b[31m")
@@ -20,7 +34,8 @@
   (fn [s] (str color s reset-color)))
 
 (defn- colorize-choice []
-  (.toUpperCase (or (System/getenv "MIDJE_COLORIZE") "true")))
+  (.toUpperCase (or (getenv "MIDJE_COLORIZE")
+                    (str (not (on-windows?))))))
 
 (defn- default-color-choice? []
   (= (colorize-choice) "TRUE"))

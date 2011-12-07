@@ -10,6 +10,7 @@ Installation
 `lein-midje` is available as a plugin:
 
       $ lein plugin install lein-midje 1.0.6       # Stable version
+      $ lein plugin install lein-midje 1.0.7       # Experimental version 
 
 [Note: for reasons unknown, you may need to first uninstall
 earlier versions.]
