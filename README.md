@@ -53,10 +53,15 @@ dependency be included in your `project.clj` file, as in:
 Environment Variables
 ==============
 
-Colorizing of results is turned on by default. It can be
+On Unix systems, colorizing of results is turned on by default. It can be
 turned off with
 
       $ export MIDJE_COLORIZE=false
+
+Colorizing is off by default on Windows systems. It can be
+turned on with:
+
+      $ export MIDJE_COLORIZE=true
 
 Coloring is most readable with light text against a dark
 background. If you use dark text against a light background,
