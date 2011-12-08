@@ -9,15 +9,14 @@ Installation
 
 `lein-midje` is available as a plugin:
 
-      $ lein plugin install lein-midje 1.0.6       # Stable version
-      $ lein plugin install lein-midje 1.0.7       # Experimental version 
+      $ lein plugin install lein-midje 1.0.7       # Stable version
 
 [Note: for reasons unknown, you may need to first uninstall
 earlier versions.]
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.6"]])
+      :dev-dependencies [[lein-midje "1.0.7"]])
 
 
 Use
@@ -60,10 +59,12 @@ turned off with
       $ export MIDJE_COLORIZE=false
 
 Coloring is most readable with light text against a dark
-background. In lein-midje 1.0.6, you can switch to a scheme
-more readable with dark text against a light background:
+background. If you use dark text against a light background,
+you might prefer this:
 
       $ export MIDJE_COLORIZE=reverse
+
+It colors the background instead of the letters.
 
 Contributors
 ==========
