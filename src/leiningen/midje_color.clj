@@ -1,6 +1,7 @@
 ;; -*- indent-tabs-mode: nil -*-
 
-(ns leiningen.midje-color)
+(ns leiningen.midje-color
+  (:require [clojure.string :as str]))
 
 ;;; This should use midje.util.colorize.clj, midje.util.ecosystem, and
 ;;; the colorize jar, but for some reason that drags all of Clojure
@@ -52,3 +53,8 @@
   (def fail (make-colorizer background-red))
   (def pass (make-colorizer background-green))
   (def note (make-colorizer background-cyan)))
+
+(defn colorize-deftest-output [s]
+  (-> s 
+      (str/replace #"^FAIL" (fail "FAIL"))
+      (str/replace #"^ERROR" (fail "ERROR"))))

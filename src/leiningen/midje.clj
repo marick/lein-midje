@@ -62,7 +62,8 @@
          ;; For some reason, empty lines are swallowed, so I use >>> to
          ;; demarcate sections.
          (println (color/note ">>> Output from clojure.test tests:"))
-         (dorun (map println (drop-last 2 ct-output#))))
+         (dorun (map (comp println color/colorize-deftest-output) 
+                     (drop-last 2 ct-output#))))
 
        (when (> (:test ct-result#) 0)
          (println (color/note ">>> clojure.test summary:"))
