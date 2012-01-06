@@ -30,7 +30,7 @@
      (doseq [n# namespaces#] (require n#))
      namespaces#))
 
-(defn- make-report-fn []
+(defn- make-report-fn [exit-after-tests?]
   `(fn [namespaces#]
      (let [midje-passes# (:pass @clojure.test/*report-counters*)
            midje-fails# (:fail @clojure.test/*report-counters*)
@@ -74,7 +74,7 @@
        (println midje-failure-message# midje-consolation#)
 
        ;; A non-nil return value is printed, so I'll just exit here.
-       (when ~*exit-after-tests*
+       (when ~exit-after-tests?
          (System/exit (+ midje-fails#
                         (:error ct-result#)
                         (:fail ct-result#)))))
@@ -109,7 +109,9 @@
     (if lazy-test-mode?
       (eval-in-project
         project
-        `(lazytest.watch/start '~paths :run-fn '~(make-run-fn) :report-fn '~(make-report-fn))
+        `(lazytest.watch/start '~paths
+                               :run-fn ~(make-run-fn)
+                               :report-fn ~(make-report-fn false))
         nil
         nil
         '(require '[clojure walk template stacktrace test string set]
@@ -122,7 +124,7 @@
                                  (get-namespaces namespaces))]
         (eval-in-project
           project
-          `(~(make-report-fn) (apply ~(make-run-fn) '~desired-namespaces))
+          `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) '~desired-namespaces))
           nil
           nil
           '(require '[clojure walk template stacktrace test string set]
