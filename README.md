@@ -82,3 +82,4 @@ Contributors
 * Andreas Wurzer
 * Brian Marick
 * dnaumov
+* Sam Richie
