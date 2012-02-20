@@ -104,7 +104,7 @@
   when they change.
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
-  (let [lazy-test-mode? (= "\"--lazytest\"" (pr-str (first lazytest-or-namespaces))) 
+  (let [lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
         paths [(:test-path project) (:source-path project)]]
     (if lazy-test-mode?
       (eval-in-project
