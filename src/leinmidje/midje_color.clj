@@ -1,6 +1,6 @@
 ;; -*- indent-tabs-mode: nil -*-
 
-(ns leiningen.midje-color
+(ns leinmidje.midje-color
   (:require [clojure.string :as str]))
 
 ;;; This should use midje.util.colorize.clj, midje.util.ecosystem, and

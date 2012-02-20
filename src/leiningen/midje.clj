@@ -115,7 +115,7 @@
         nil
         nil
         '(require '[clojure walk template stacktrace test string set]
-                  '[leiningen.midje-color :as color]
+                  '[leinmidje.midje-color :as color]
                   '[lazytest watch]))
     
       (let [namespaces lazytest-or-namespaces
@@ -128,4 +128,4 @@
           nil
           nil
           '(require '[clojure walk template stacktrace test string set]
-                    '[leiningen.midje-color :as color]))))))
+                    '[leinmidje.midje-color :as color]))))))
