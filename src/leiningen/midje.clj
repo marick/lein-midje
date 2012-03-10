@@ -2,10 +2,18 @@
 
 (ns leiningen.midje
   (:refer-clojure :exclude [test])
-  (:use [leiningen.util.ns :only [namespaces-in-dir namespaces-matching]]
+  (:use [bultitude.core :only [namespaces-on-classpath]]
         [leiningen.test :only [*exit-after-tests*]]
-        [leiningen.compile :only [eval-in-project]]
         [clojure.set :only [difference]]))
+
+;; eval-in-project has moved between versions 1 and 2.
+;; first try the new location, then fall back to old one.
+(try
+  (use '[leiningen.core.eval :only [eval-in-project]])
+  (def leiningen-two-in-use? true)
+  (catch java.io.FileNotFoundException e
+    (def leiningen-two-in-use? false)
+    (use '[leiningen.compile :only [eval-in-project]])))
 
 (defn- make-run-fn []
   `(fn [& namespaces#]
@@ -82,9 +90,25 @@
 
 (defn- get-namespaces [namespaces]
   (mapcat #(if (= \* (last %))
-             (namespaces-matching (apply str (butlast %)))
+             (namespaces-on-classpath :prefix (apply str (butlast %)))
              [(symbol %)])
     namespaces))
+
+(defn- collect-paths
+  "returns source and test paths from the project.
+  Leiningen 1 and 2 have slightly different names for project map entries."
+  [project]
+  (if leiningen-two-in-use?
+    (concat (:test-paths project)     ;; Leiningen 2 has vectors of paths in each entry
+            (:source-paths project))
+    [(:test-path project) (:source-path project)]))
+
+(defn- e-i-p
+  "eval-in-project. Leiningen 1 and 2 have slightly different arguments for the invocation."
+  [project form init]
+  (if leiningen-two-in-use?
+    (eval-in-project project form init)
+    (eval-in-project project form nil nil init)))
 
 (defn midje
   "Runs both Midje and clojure.test tests.
@@ -105,27 +129,24 @@
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
   (let [lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
-        paths [(:test-path project) (:source-path project)]]
+        paths (collect-paths project)]
     (if lazy-test-mode?
-      (eval-in-project
+      (e-i-p
         project
         `(lazytest.watch/start '~paths
                                :run-fn ~(make-run-fn)
                                :report-fn ~(make-report-fn false))
-        nil
-        nil
         '(require '[clojure walk template stacktrace test string set]
                   '[leinmidje.midje-color :as color]
                   '[lazytest watch]))
     
       (let [namespaces lazytest-or-namespaces
             desired-namespaces (if (empty? namespaces)
-                                 (mapcat namespaces-in-dir paths)
+                                 (namespaces-on-classpath :classpath (map #(java.io.File. %) paths))
                                  (get-namespaces namespaces))]
-        (eval-in-project
-          project
+        (e-i-p
+         (update-in project [:dependencies]
+                    conj ['lein-midje "1.0.9"])
           `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) '~desired-namespaces))
-          nil
-          nil
           '(require '[clojure walk template stacktrace test string set]
                     '[leinmidje.midje-color :as color]))))))
