@@ -145,7 +145,8 @@
                                  (namespaces-on-classpath :classpath (map #(java.io.File. %) paths))
                                  (get-namespaces namespaces))]
         (e-i-p
-          project
+         (update-in project [:dependencies]
+                    conj ['lein-midje "1.0.9"])
           `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) '~desired-namespaces))
           '(require '[clojure walk template stacktrace test string set]
                     '[leinmidje.midje-color :as color]))))))
