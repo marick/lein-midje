@@ -18,6 +18,12 @@
 
 (def PLUGIN_VERSION "1.0.9")
 
+(defmacro when-in-leiningen-two
+  [then-body else-body]
+  (if leiningen-two-in-use?
+    then-body
+    else-body))
+
 (defn- make-run-fn []
   `(fn [& namespaces#]
      ;; This turns off "Testing ...." lines, which I hate, especially
@@ -113,14 +119,6 @@
     (eval-in-project project form init)
     (eval-in-project project form nil nil init)))
 
-(defn- merge-test-profile
-  "Leiningen 2 supports profiles in project. Test runs are made with profile :test
-  and project settings need to be merged from there."
-  [project]
-  (if leiningen-two-in-use?
-    (project/merge-profiles project [:test]) 
-    project))
-
 (defn- append-classpath
   "Inside eval-in-project leiningen 2 does not have plugin's own code on classpath.
   We need it and must therefore add our own code to project classpath."
@@ -146,9 +144,9 @@
   when they change.
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
-  (let [project (-> project
-                    merge-test-profile
-                    append-classpath)
+  (let [project (append-classpath (when-in-leiningen-two
+                                   (project/merge-profiles project [:test]) 
+                                   project))
         lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
         paths (collect-paths project)]
     (if lazy-test-mode?
