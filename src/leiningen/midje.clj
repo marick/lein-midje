@@ -10,6 +10,7 @@
 ;; first try the new location, then fall back to old one.
 (try
   (use '[leiningen.core.eval :only [eval-in-project]])
+  (require '[leiningen.core.project :as project])
   (def leiningen-two-in-use? true)
   (catch java.io.FileNotFoundException e
     (def leiningen-two-in-use? false)
@@ -130,7 +131,10 @@
   when they change.
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
-  (let [project (update-in project [:dependencies]
+  (let [project (if leiningen-two-in-use?
+                  (project/merge-profiles project [:test]) 
+                  project)
+        project (update-in project [:dependencies]
                            conj ['lein-midje PLUGIN_VERSION])
         lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
         paths (collect-paths project)]
