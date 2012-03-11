@@ -113,6 +113,21 @@
     (eval-in-project project form init)
     (eval-in-project project form nil nil init)))
 
+(defn- merge-test-profile
+  "Leiningen 2 supports profiles in project. Test runs are made with profile :test
+  and project settings need to be merged from there."
+  [project]
+  (if leiningen-two-in-use?
+    (project/merge-profiles project [:test]) 
+    project))
+
+(defn- append-classpath
+  "Inside eval-in-project leiningen 2 does not have plugin's own code on classpath.
+  We need it and must therefore add our own code to project classpath."
+  [project]
+  (update-in project [:dependencies]
+             conj ['lein-midje PLUGIN_VERSION]))
+
 (defn midje
   "Runs both Midje and clojure.test tests.
   There are three ways to use this plugin:
@@ -131,11 +146,9 @@
   when they change.
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
-  (let [project (if leiningen-two-in-use?
-                  (project/merge-profiles project [:test]) 
-                  project)
-        project (update-in project [:dependencies]
-                           conj ['lein-midje PLUGIN_VERSION])
+  (let [project (-> project
+                    merge-test-profile
+                    append-classpath)
         lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
         paths (collect-paths project)]
     (if lazy-test-mode?
