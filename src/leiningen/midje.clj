@@ -15,6 +15,8 @@
     (def leiningen-two-in-use? false)
     (use '[leiningen.compile :only [eval-in-project]])))
 
+(def PLUGIN_VERSION "1.0.9")
+
 (defn- make-run-fn []
   `(fn [& namespaces#]
      ;; This turns off "Testing ...." lines, which I hate, especially
@@ -128,7 +130,9 @@
   when they change.
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
-  (let [lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
+  (let [project (update-in project [:dependencies]
+                           conj ['lein-midje PLUGIN_VERSION])
+        lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
         paths (collect-paths project)]
     (if lazy-test-mode?
       (e-i-p
@@ -145,8 +149,7 @@
                                  (namespaces-on-classpath :classpath (map #(java.io.File. %) paths))
                                  (get-namespaces namespaces))]
         (e-i-p
-         (update-in project [:dependencies]
-                    conj ['lein-midje "1.0.9"])
+         project
           `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) '~desired-namespaces))
           '(require '[clojure walk template stacktrace test string set]
                     '[leinmidje.midje-color :as color]))))))
