@@ -10,10 +10,13 @@
 ;; first try the new location, then fall back to old one.
 (try
   (use '[leiningen.core.eval :only [eval-in-project]])
+  (require '[leiningen.core.project :as project])
   (def leiningen-two-in-use? true)
   (catch java.io.FileNotFoundException e
     (def leiningen-two-in-use? false)
     (use '[leiningen.compile :only [eval-in-project]])))
+
+(def PLUGIN_VERSION "1.0.9")
 
 (defn- make-run-fn []
   `(fn [& namespaces#]
@@ -110,6 +113,21 @@
     (eval-in-project project form init)
     (eval-in-project project form nil nil init)))
 
+(defn- merge-test-profile
+  "Leiningen 2 supports profiles in project. Test runs are made with profile :test
+  and project settings need to be merged from there."
+  [project]
+  (if leiningen-two-in-use?
+    (project/merge-profiles project [:test]) 
+    project))
+
+(defn- append-classpath
+  "Inside eval-in-project leiningen 2 does not have plugin's own code on classpath.
+  We need it and must therefore add our own code to project classpath."
+  [project]
+  (update-in project [:dependencies]
+             conj ['lein-midje PLUGIN_VERSION]))
+
 (defn midje
   "Runs both Midje and clojure.test tests.
   There are three ways to use this plugin:
@@ -128,7 +146,10 @@
   when they change.
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
-  (let [lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
+  (let [project (-> project
+                    merge-test-profile
+                    append-classpath)
+        lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
         paths (collect-paths project)]
     (if lazy-test-mode?
       (e-i-p
@@ -145,8 +166,7 @@
                                  (namespaces-on-classpath :classpath (map #(java.io.File. %) paths))
                                  (get-namespaces namespaces))]
         (e-i-p
-         (update-in project [:dependencies]
-                    conj ['lein-midje "1.0.9"])
+         project
           `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) '~desired-namespaces))
           '(require '[clojure walk template stacktrace test string set]
                     '[leinmidje.midje-color :as color]))))))
