@@ -2,8 +2,7 @@
 
 (ns leiningen.midje
   (:refer-clojure :exclude [test])
-  (:use [bultitude.core :only [namespaces-on-classpath]]
-        [leiningen.test :only [*exit-after-tests*]]
+  (:use [leiningen.test :only [*exit-after-tests*]]
         [clojure.set :only [difference]]))
 
 ;; eval-in-project has moved between versions 1 and 2.
@@ -97,9 +96,29 @@
                         (:fail ct-result#)))))
 ))
 
+(defn- namespaces-in-dir
+  [dir-path]
+  (when-in-leiningen-two
+   (do
+     (require ['bultitude.core])
+     (bultitude.core/namespaces-in-dir dir-path))
+   (do
+     (require ['leiningen.util.ns])
+     (leiningen.util.ns/namespaces-in-dir dir-path))))
+
+(defn- namespaces-matching
+  [prefix]
+  (when-in-leiningen-two
+   (do
+     (require ['bultitude.core])
+     (bultitude.core/namespaces-on-classpath :prefix prefix))
+   (do
+     (require ['leiningen.util.ns])
+     (leiningen.util.ns/namespaces-matching prefix))))
+
 (defn- get-namespaces [namespaces]
   (mapcat #(if (= \* (last %))
-             (namespaces-on-classpath :prefix (apply str (butlast %)))
+             (namespaces-matching (apply str (butlast %)))
              [(symbol %)])
     namespaces))
 
@@ -161,7 +180,7 @@
     
       (let [namespaces lazytest-or-namespaces
             desired-namespaces (if (empty? namespaces)
-                                 (namespaces-on-classpath :classpath (map #(java.io.File. %) paths))
+                                 (mapcat namespaces-in-dir paths)
                                  (get-namespaces namespaces))]
         (e-i-p
          project
