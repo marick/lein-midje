@@ -114,7 +114,7 @@
      (bultitude.core/namespaces-on-classpath :prefix prefix))
    (do
      (require ['leiningen.util.ns])
-     (leiningen.util.ns/namespaces-matching prefix))))
+     (leiningen.util.ns/namespaces-matching (.replaceAll prefix "-" "_")))))
 
 (defn- get-namespaces [namespaces]
   (mapcat #(if (= \* (last %))
