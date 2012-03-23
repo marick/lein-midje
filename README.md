@@ -81,5 +81,6 @@ Contributors
 * Alex Baranosky
 * Andreas Wurzer
 * Brian Marick
-* dnaumov
+* Dmitri Naumov
 * Sam Richie
+* Teemu Antti-Poika
