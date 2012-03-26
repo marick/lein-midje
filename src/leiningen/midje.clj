@@ -81,10 +81,12 @@
 ))
 
 (defn- get-namespaces [namespaces]
-  (mapcat #(if (= \* (last %))
-             (namespaces-matching (apply str (butlast %)))
-             [(symbol %)])
-    namespaces))
+  (letfn [(format-ns [ns]
+            (.replaceAll (apply str (butlast ns) "-" "_")))]
+    (mapcat #(if (= \* (last %))
+               (namespaces-matching (format-ns %))
+               [(symbol %)])
+      namespaces)))
 
 (defn midje
   "Runs both Midje and clojure.test tests.
