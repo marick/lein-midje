@@ -2,26 +2,13 @@
 
 (ns leiningen.midje
   (:refer-clojure :exclude [test])
-  (:use [leiningen.test :only [*exit-after-tests*]]
-        [clojure.set :only [difference]]))
+  (:use [bultitude.core :only [namespaces-in-dir namespaces-on-classpath]]
+        [clojure.set :only [difference]]
+        [leiningen.core.eval :only [eval-in-project]]
+        [leiningen.core.project :only [merge-profiles]]     
+        [leiningen.test :only [*exit-after-tests*]]))
 
-;; eval-in-project has moved between versions 1 and 2.
-;; first try the new location, then fall back to old one.
-(try
-  (use '[leiningen.core.eval :only [eval-in-project]])
-  (require '[leiningen.core.project :as project])
-  (def leiningen-two-in-use? true)
-  (catch java.io.FileNotFoundException e
-    (def leiningen-two-in-use? false)
-    (use '[leiningen.compile :only [eval-in-project]])))
-
-(def PLUGIN_VERSION "1.0.9")
-
-(defmacro when-in-leiningen-two
-  [then-body else-body]
-  (if leiningen-two-in-use?
-    then-body
-    else-body))
+(def PLUGIN_VERSION "2.0.0")
 
 (defn- make-run-fn []
   `(fn [& namespaces#]
@@ -96,47 +83,11 @@
                         (:fail ct-result#)))))
 ))
 
-(defn- namespaces-in-dir
-  [dir-path]
-  (when-in-leiningen-two
-   (do
-     (require ['bultitude.core])
-     (bultitude.core/namespaces-in-dir dir-path))
-   (do
-     (require ['leiningen.util.ns])
-     (leiningen.util.ns/namespaces-in-dir dir-path))))
-
-(defn- namespaces-matching
-  [prefix]
-  (when-in-leiningen-two
-   (do
-     (require ['bultitude.core])
-     (bultitude.core/namespaces-on-classpath :prefix prefix))
-   (do
-     (require ['leiningen.util.ns])
-     (leiningen.util.ns/namespaces-matching (.replaceAll prefix "-" "_")))))
-
 (defn- get-namespaces [namespaces]
   (mapcat #(if (= \* (last %))
-             (namespaces-matching (apply str (butlast %)))
+             (namespaces-on-classpath :prefix (apply str (butlast %)))
              [(symbol %)])
     namespaces))
-
-(defn- collect-paths
-  "returns source and test paths from the project.
-  Leiningen 1 and 2 have slightly different names for project map entries."
-  [project]
-  (if leiningen-two-in-use?
-    (concat (:test-paths project)     ;; Leiningen 2 has vectors of paths in each entry
-            (:source-paths project))
-    [(:test-path project) (:source-path project)]))
-
-(defn- e-i-p
-  "eval-in-project. Leiningen 1 and 2 have slightly different arguments for the invocation."
-  [project form init]
-  (if leiningen-two-in-use?
-    (eval-in-project project form init)
-    (eval-in-project project form nil nil init)))
 
 (defn- append-classpath
   "Inside eval-in-project leiningen 2 does not have plugin's own code on classpath.
@@ -163,13 +114,11 @@
   when they change.
   NOTE: Requires lazytest dev-dependency."
   [project & lazytest-or-namespaces]
-  (let [project (append-classpath (when-in-leiningen-two
-                                   (project/merge-profiles project [:test]) 
-                                   project))
+  (let [project (append-classpath (merge-profiles project [:test]))
         lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
-        paths (collect-paths project)]
+        paths (concat (:test-paths project) (:source-paths project))]
     (if lazy-test-mode?
-      (e-i-p
+      (eval-in-project
         project
         `(lazytest.watch/start '~paths
                                :run-fn ~(make-run-fn)
@@ -182,7 +131,7 @@
             desired-namespaces (if (empty? namespaces)
                                  (mapcat namespaces-in-dir paths)
                                  (get-namespaces namespaces))]
-        (e-i-p
+        (eval-in-project
          project
           `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) '~desired-namespaces))
           '(require '[clojure walk template stacktrace test string set]
