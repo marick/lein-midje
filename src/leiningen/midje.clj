@@ -7,22 +7,6 @@
         [leiningen.compile :only [eval-in-project]]
         [clojure.set :only [difference]]))
 
-
-;; For backwards compatibility w/ versions of Midje that didn't have 
-;; a way to configure the summary formatting
-(try
-  (require '[midje.ideas.reporting.report :as report])
-  (def configurable-formatting? true)
-
-  (catch java.io.FileNotFoundException e
-    (def configurable-formatting? false)))
-
-(defmacro ^{:private true} when-in-midje-version-with-configurable-formatting
-  [then-body else-body]
-  (if configurable-formatting? then-body else-body))
-
-
-
 (defn- make-run-fn []
   `(fn [& namespaces#]
      ;; This turns off "Testing ...." lines, which I hate, especially
@@ -43,22 +27,19 @@
      ;; which would check the facts twice, which is confusing. The following, I
      ;; hope, loads each file at most once.
      (dosync (alter @#'clojure.core/*loaded-libs* difference (set namespaces#)))
-     (when-in-midje-version-with-configurable-formatting
-       (binding [report/*report-format-config* (get report/formatters "default")]
-         (doseq [n# namespaces#] (require n#)))
-       (doseq [n# namespaces#] (require n#)))
+     (doseq [n# namespaces#] (require n#))
      namespaces#))
 
-(defn- fallback-summary-fn [exit-after-tests?]
+(defn- make-report-fn [exit-after-tests?]
   `(fn [namespaces#]
      (let [midje-passes# (:pass @clojure.test/*report-counters*)
            midje-fails# (:fail @clojure.test/*report-counters*)
            midje-failure-message# (condp = midje-fails#
                                       0 (color/pass (format "All claimed facts (%d) have been confirmed." midje-passes#))
                                       1 (str (color/fail "FAILURE:")
-                                          (format " %d fact was not confirmed." midje-fails#))
+                                             (format " %d fact was not confirmed." midje-fails#))
                                       (str (color/fail "FAILURE:")
-                                        (format " %d facts were not confirmed." midje-fails#)))
+                                           (format " %d facts were not confirmed." midje-fails#)))
 
            potential-consolation# (condp = midje-passes#
                                     0 ""
@@ -70,10 +51,10 @@
            ; Stashed clojure.test output
            ct-output-catcher# (java.io.StringWriter.)
            ct-result# (binding [clojure.test/*test-out* ct-output-catcher#]
-                        (apply ~'clojure.test/run-tests namespaces#))
+                                  (apply ~'clojure.test/run-tests namespaces#))
            ct-output# (-> ct-output-catcher#
-                          .toString
-                          clojure.string/split-lines)
+                                    .toString
+                                    clojure.string/split-lines)
            ct-failures-and-errors# (+ (:fail ct-result#) (:error ct-result#))
            ct-some-kind-of-fail?# (> ct-failures-and-errors# 0)]
 
@@ -81,7 +62,7 @@
          ;; For some reason, empty lines are swallowed, so I use >>> to
          ;; demarcate sections.
          (println (color/note ">>> Output from clojure.test tests:"))
-         (dorun (map (comp println color/colorize-deftest-output)
+         (dorun (map (comp println color/colorize-deftest-output) 
                      (drop-last 2 ct-output#))))
 
        (when (> (:test ct-result#) 0)
@@ -96,12 +77,8 @@
        (when ~exit-after-tests?
          (System/exit (+ midje-fails#
                         (:error ct-result#)
-                        (:fail ct-result#)))))))
-
-(defn- make-report-fn [exit-after-tests?]
-  (when-in-midje-version-with-configurable-formatting
-    ((:summary-fn report/*report-format-config*) exit-after-tests?)
-    (fallback-summary-fn exit-after-tests?)))
+                        (:fail ct-result#)))))
+))
 
 (defn- get-namespaces [namespaces]
   (letfn [(format-ns [ns]
