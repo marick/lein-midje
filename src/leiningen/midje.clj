@@ -105,7 +105,7 @@
 
 (defn- get-namespaces [namespaces]
   (letfn [(format-ns [ns]
-            (.replaceAll (apply str (butlast ns) "-" "_")))]
+            (.replaceAll (apply str (butlast ns)) "-" "_"))]
     (mapcat #(if (= \* (last %))
                (namespaces-matching (format-ns %))
                [(symbol %)])
