@@ -18,11 +18,9 @@ earlier versions.]
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.10"]])
+      :dev-dependencies [[lein-midje "1.0.10"]]) ;; Leiningen 1
       
-      ;; or
-      
-      :dev-dependencies [[lein-midje "2.0.0-SNAPSHOT"]])
+      :dev-dependencies [[lein-midje "2.0.0-SNAPSHOT"]]) ;; Leiningen 2
 
 
 Use
