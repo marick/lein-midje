@@ -9,7 +9,7 @@ Installation
 
 `lein-midje` is available as a plugin:
 
-      $ lein plugin install lein-midje 1.0.9  ;; Leiningen 1
+      $ lein plugin install lein-midje 1.0.10  ;; Leiningen 1
       
       $ lein plugin install lein-midje 2.0.0-SNAPSHOT  ;; Leiningen 2
 
@@ -18,7 +18,11 @@ earlier versions.]
 
 Or you can include it in your `project.clj`:
 
-      :dev-dependencies [[lein-midje "1.0.9"]])
+      :dev-dependencies [[lein-midje "1.0.10"]])
+      
+      ;; or
+      
+      :dev-dependencies [[lein-midje "2.0.0-SNAPSHOT"]])
 
 
 Use
