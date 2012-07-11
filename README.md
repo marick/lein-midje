@@ -84,5 +84,7 @@ Contributors
 * Andreas Wurzer
 * Brian Marick
 * Dmitri Naumov
+* Mark Simpson
 * Sam Richie
 * Teemu Antti-Poika
+* Timo Mihaljov
