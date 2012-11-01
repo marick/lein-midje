@@ -8,7 +8,7 @@
         [leiningen.core.project :only [merge-profiles]]     
         [leiningen.test :only [*exit-after-tests*]]))
 
-(def PLUGIN_VERSION "2.0.0-SNAPSHOT")
+(def PLUGIN_VERSION "2.0.1")
 
 (defn- make-run-fn []
   `(fn [& namespaces#]
