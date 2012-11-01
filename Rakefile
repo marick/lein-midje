@@ -35,8 +35,5 @@ end
 desc "upload to clojars"
 task :upload do
   doit("lein pom")
-  if File.exist?("lein-midje.jar")
-    doit("mv lein-midje.jar #{jar_name} ")
-  end
-  doit("scp pom.xml #{jar_name} clojars@clojars.org:")
+  doit("scp pom.xml target/#{jar_name} clojars@clojars.org:")
 end
