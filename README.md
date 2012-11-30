@@ -12,7 +12,7 @@ Installation (Leiningen 2)
 
 
 {:user {...
-        :plugins [[lein-midje "2.0.1"]]
+        :plugins [[lein-midje "2.0.2"]]
         ...}}
 
 Installation (Leiningen 1)
@@ -29,7 +29,7 @@ Or you can include it in your `project.clj`:
 
       :dev-dependencies [[lein-midje "1.0.10"]] ;; Leiningen 1
       
-      :profiles {:dev {:plugins [[lein-midje "2.0.1"]]}} ;; Leiningen 2
+      :profiles {:dev {:plugins [[lein-midje "2.0.2"]]}} ;; Leiningen 2
 
 
 Use
@@ -96,6 +96,7 @@ Contributors
 * Brian Marick
 * Dmitri Naumov
 * Mark Simpson
+* Matt Mitchell
 * Sam Richie
 * Teemu Antti-Poika
 * Timo Mihaljov
