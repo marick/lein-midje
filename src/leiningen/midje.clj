@@ -2,13 +2,21 @@
 
 (ns leiningen.midje
   (:refer-clojure :exclude [test])
-  (:use [bultitude.core :only [namespaces-in-dir namespaces-on-classpath]]
-        [clojure.set :only [difference]]
+  (:use [clojure.set :only [difference]]
         [leiningen.core.eval :only [eval-in-project]]
-        [leiningen.core.project :only [merge-profiles]]     
+        [leiningen.core.project :only [merge-profiles]]
         [leiningen.test :only [*exit-after-tests*]]))
 
 (def PLUGIN_VERSION "2.0.1")
+
+(defn- make-classpath-getter []
+  `(fn [namespaces# paths#]
+     (if (empty? namespaces#)
+       (mapcat bultitude.core/namespaces-in-dir paths#)
+       (mapcat #(if (= \* (last %))
+                  (bultitude.core/namespaces-on-classpath :prefix (apply str (butlast %)))
+                  [(symbol %)])
+               namespaces#))))
 
 (defn- make-run-fn []
   `(fn [& namespaces#]
@@ -83,12 +91,6 @@
                         (:fail ct-result#)))))
 ))
 
-(defn- get-namespaces [namespaces]
-  (mapcat #(if (= \* (last %))
-             (namespaces-on-classpath :prefix (apply str (butlast %)))
-             [(symbol %)])
-    namespaces))
-
 (defn- append-classpath
   "Inside eval-in-project leiningen 2 does not have plugin's own code on classpath.
   We need it and must therefore add our own code to project classpath."
@@ -119,20 +121,16 @@
         paths (concat (:test-paths project) (:source-paths project))]
     (if lazy-test-mode?
       (eval-in-project
-        project
-        `(lazytest.watch/start '~paths
-                               :run-fn ~(make-run-fn)
-                               :report-fn ~(make-report-fn false))
-        '(require '[clojure walk template stacktrace test string set]
-                  '[leinmidje.midje-color :as color]
-                  '[lazytest watch]))
-    
-      (let [namespaces lazytest-or-namespaces
-            desired-namespaces (if (empty? namespaces)
-                                 (mapcat namespaces-in-dir paths)
-                                 (get-namespaces namespaces))]
-        (eval-in-project
-         project
-          `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) '~desired-namespaces))
-          '(require '[clojure walk template stacktrace test string set]
-                    '[leinmidje.midje-color :as color]))))))
+       project
+       `(lazytest.watch/start '~paths
+                              :run-fn ~(make-run-fn)
+                              :report-fn ~(make-report-fn false))
+       '(require '[clojure walk template stacktrace test string set]
+                 '[leinmidje.midje-color :as color]
+                 '[lazytest watch]))
+      (eval-in-project
+       project
+       `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) (~(make-classpath-getter) '~lazytest-or-namespaces '~paths)))
+       '(require '[bultitude.core]
+                 '[clojure walk template stacktrace test string set]
+                 '[leinmidje.midje-color :as color])))))
