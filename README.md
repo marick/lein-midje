@@ -12,7 +12,7 @@ Installation (Leiningen 2)
 
 
 {:user {...
-        :plugins [[lein-midje "2.0.2"]]
+        :plugins [[lein-midje "2.0.3"]]
         ...}}
 
 Installation (Leiningen 1)

@@ -7,7 +7,7 @@
         [leiningen.core.project :only [merge-profiles]]
         [leiningen.test :only [*exit-after-tests*]]))
 
-(def PLUGIN_VERSION "2.0.2")
+(def PLUGIN_VERSION "2.0.3")
 
 (defn- make-classpath-getter []
   `(fn [namespaces# paths#]

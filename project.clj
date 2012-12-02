@@ -1,4 +1,4 @@
-(defproject lein-midje/lein-midje "2.0.2"
+(defproject lein-midje/lein-midje "2.0.3"
   :description "Run Midje and clojure.test tests"
   :url "https://github.com/marick/lein-midje"
   :author "See README"
