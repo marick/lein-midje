@@ -1,8 +1,16 @@
+Available via [clojars](http://clojars.org/search?q=lein-midje)   
+For Leiningen 1: 1.0.10    
+For Leiningen 2: 2.0.3    
+
+Purpose
+==========
+
 This plugin runs both
 [Midje](https://github.com/marick/Midje) and clojure.test
 tests. The 1.x.x versions work with Leiningen 1, and the
 2.x.x versions work with Leiningen 2. All further
 development will be for Leiningen 2.
+
 
 Installation (Leiningen 2)
 ==========
@@ -10,10 +18,11 @@ Installation (Leiningen 2)
 `lein-midje` is a plugin, so add this to your
 `~/.lein/profiles.clj`:
 
+    {:user {:plugins [[lein-midje "2.X.X"]]}}
 
-{:user {...
-        :plugins [[lein-midje "2.0.3"]]
-        ...}}
+Or you can include it in your `project.clj`:
+
+    {:profiles {:dev {:plugins [[lein-midje "2.X.X"]]}}}
 
 Installation (Leiningen 1)
 ==========
@@ -28,9 +37,6 @@ earlier versions.]
 Or you can include it in your `project.clj`:
 
       :dev-dependencies [[lein-midje "1.0.10"]] ;; Leiningen 1
-      
-      :profiles {:dev {:plugins [[lein-midje "2.0.2"]]}} ;; Leiningen 2
-
 
 Use
 ==========
