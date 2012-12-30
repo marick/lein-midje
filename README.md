@@ -63,13 +63,9 @@ changed test files, use this:
 
        $ lein midje --lazytest
 
-This requires that the
-[lazytest](https://github.com/stuartsierra/lazytest)
-dependency be included in your `project.clj` file, as in:
+This will automatically add a dependency to lazytest and Stuart Sierra's repo to your project:
 
-      [com.stuartsierra/lazytest "1.2.3"]
-
-You'll also need to add Stuart Sierra's maven repo to your `project.clj`, like so:
+      :dependencies [com.stuartsierra/lazytest "1.2.3"]
 
       :repositories {"stuart" "http://stuartsierra.com/maven2"}
 
