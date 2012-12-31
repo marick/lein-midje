@@ -7,7 +7,8 @@ def jar_name
   text = File.read('project.clj')
   unless /lein-midje\s+"(\d+\.\d+\.\d+(-[A-Z]+)?)"/ =~ text ||
          /lein-midje\s+"(\d+\.\d-alpha\d)"/ =~ text || 
-         /lein-midje\s+"(\d+\.\d-beta\d)"/ =~ text
+         /lein-midje\s+"(\d+\.\d-beta\d)"/ =~ text ||
+         /lein-midje\s+"(\d+\.\d-SNAPSHOT)"/ =~ text
     puts "Couldn't find version in project file."
     exit 1
   end
