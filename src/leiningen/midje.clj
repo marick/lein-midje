@@ -98,6 +98,15 @@
   (update-in project [:dependencies]
              conj ['lein-midje PLUGIN_VERSION]))
 
+(defn- append-lazy-deps
+  "Add lazytest dependencies to project classpath."
+  [project]
+  (update-in
+    (update-in project [:dependencies ] conj ['com.stuartsierra/lazytest "1.2.3"])
+    [:repositories ] conj ["stuart" {:url "http://stuartsierra.com/maven2"}]))
+
+
+
 (defn midje
   "Runs both Midje and clojure.test tests.
   There are three ways to use this plugin:
@@ -121,7 +130,7 @@
         paths (concat (:test-paths project) (:source-paths project))]
     (if lazy-test-mode?
       (eval-in-project
-       project
+       (append-lazy-deps project)
        `(lazytest.watch/start '~paths
                               :run-fn ~(make-run-fn)
                               :report-fn ~(make-report-fn false))
