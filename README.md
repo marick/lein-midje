@@ -106,5 +106,6 @@ Contributors
 * Mark Simpson
 * Matt Mitchell
 * Sam Richie
+* Sebastian Hennebrueder
 * Teemu Antti-Poika
 * Timo Mihaljov
