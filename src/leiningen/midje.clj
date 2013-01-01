@@ -1,12 +1,8 @@
 ;; -*- indent-tabs-mode: nil -*-
 
 (ns leiningen.midje
-  (:use [leiningen.core.eval :only [eval-in-project]]))
-
-(defn do-load-default-facts [project]
-  (eval-in-project project
-                   `(midje.repl/load-facts :all)
-                   '(require 'midje.repl)))
+  (:use [leiningen.core.eval :only [eval-in-project]]
+        [leiningen.core.main :only [abort]]))
 
 (defn do-load-facts [project args]
   (letfn [(prepare-arg [argstring]
@@ -15,8 +11,8 @@
                 `(quote ~value)
                 value)))]
     (eval-in-project project
-                     `(do (prn 'FOO)
-                          (System/exit (midje.repl/load-facts ~@(map prepare-arg args))))
+                     `(let [failure-count# (midje.repl/load-facts ~@(map prepare-arg args))]
+                        (when (pos? failure-count#) (abort)))
                      '(require 'midje.repl))))
 
 (defn do-autotest [project args]
@@ -69,7 +65,7 @@
   "
   [project & args]
   (cond (empty? args)
-        (do-load-default-facts project)
+        (do-load-facts project [":all"])
 
         (or (re-matches #"-*autotest" (first args))
             (re-matches #"-*lazytest" (first args)))
