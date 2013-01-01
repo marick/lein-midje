@@ -1,8 +1,8 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)   
 For Leiningen 1: 1.0.10    
-For Leiningen 2: 2.0.3    
+For Leiningen 2: 2.0.4       
 
-Experimental version: 3.0-alpha1. This is for Leiningen 2,
+Experimental version: 3.0-alpha1. This is for Leiningen 2, 
 Midje 1.5-alpha5 or later, and Clojure 1.3 or later.
 [Here are instructions on installation and use.](https://github.com/marick/lein-midje/wiki/3.0-instructions)
 
