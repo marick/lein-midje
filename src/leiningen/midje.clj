@@ -57,10 +57,6 @@
   pathnames relative to the project root. Only files in those
   directories are scanned for changes. 
 
-  Since you are in a repl, you can pause and resume autotesting
-  with `(autotest :pause)` and `(autotest :resume)`. That is,
-  `lein midje --autotest` is basically a repl startup convenience.
-
   For backwards compatibility, you can use `--lazytest` instead of `--autotest`.
   "
   [project & args]
