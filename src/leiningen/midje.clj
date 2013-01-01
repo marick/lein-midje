@@ -4,7 +4,6 @@
   (:use [leiningen.core.eval :only [eval-in-project]])
   (:require [leiningen.core.main :as main]))
 
-
 (defn do-load-facts [project args]
   (letfn [(prepare-arg [argstring]
             (let [value (read-string argstring)]
@@ -12,9 +11,9 @@
                 `(quote ~value)
                 value)))]
     (eval-in-project project
-                     `(let [failure-count# (midje.repl/load-facts ~@(map prepare-arg args))]
-                        (when (pos? failure-count#) (main/abort)))
+                     `(System/exit (midje.repl/load-facts ~@(map prepare-arg args)))
                      '(require 'midje.repl))))
+
 
 (defn do-autotest [project args]
   (let [exec-form (if (empty? args)
