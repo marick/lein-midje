@@ -17,8 +17,8 @@
 
 (defn do-autotest [project args]
   (let [exec-form (if (empty? args)
-                    `(clojure.main/repl :init #(midje.repl/autotest))
-                    `(clojure.main/repl :init #(midje.repl/autotest :dirs [~@args])))]
+                    `(midje.repl/autotest)
+                    `(midje.repl/autotest :dirs [~@args]))]
     (eval-in-project project
                      exec-form
                      `(use 'midje.repl))))
