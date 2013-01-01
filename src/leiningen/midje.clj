@@ -1,145 +1,76 @@
 ;; -*- indent-tabs-mode: nil -*-
 
 (ns leiningen.midje
-  (:refer-clojure :exclude [test])
-  (:use [clojure.set :only [difference]]
-        [leiningen.core.eval :only [eval-in-project]]
-        [leiningen.core.project :only [merge-profiles]]
-        [leiningen.test :only [*exit-after-tests*]]))
+  (:use [leiningen.core.eval :only [eval-in-project]])
+  (:require [leiningen.core.main :as main]))
 
-(def PLUGIN_VERSION "2.0.3")
-
-(defn- make-classpath-getter []
-  `(fn [namespaces# paths#]
-     (if (empty? namespaces#)
-       (mapcat bultitude.core/namespaces-in-dir paths#)
-       (mapcat #(if (= \* (last %))
-                  (bultitude.core/namespaces-on-classpath :prefix (apply str (butlast %)))
-                  [(symbol %)])
-               namespaces#))))
-
-(defn- make-run-fn []
-  `(fn [& namespaces#]
-     ;; This turns off "Testing ...." lines, which I hate, especially
-     ;; when there's no failure output. The type check is because
-     ;; `lein test` overrides clojure.test/report with a non-multimethod.
-     (when (= clojure.lang.MultiFn (type clojure.test/report))
-       (defmethod clojure.test/report :begin-test-ns [m#]))
-
-     (alter-var-root (var clojure.test/*report-counters*)
-       (fn [_#] (ref clojure.test/*initial-report-counters*)))
-
-     ;; One style of using Midje to test a namespace is to have certain facts
-     ;; in a test/... file and facts you're working on now in the corresponding
-     ;; src/... file. We need to reload files, but in the above situation, both
-     ;; the test/... and src/... file would be in the list of namespaces to reload.
-     ;; Since the test/... file loads the source, we can't use :reload as a
-     ;; `require` argument because then the src/... file would be loaded twice,
-     ;; which would check the facts twice, which is confusing. The following, I
-     ;; hope, loads each file at most once.
-     (dosync (alter @#'clojure.core/*loaded-libs* difference (set namespaces#)))
-     (doseq [n# namespaces#] (require n#))
-     namespaces#))
-
-(defn- make-report-fn [exit-after-tests?]
-  `(fn [namespaces#]
-     (let [midje-passes# (:pass @clojure.test/*report-counters*)
-           midje-fails# (:fail @clojure.test/*report-counters*)
-           midje-failure-message# (condp = midje-fails#
-                                      0 (color/pass (format "All claimed facts (%d) have been confirmed." midje-passes#))
-                                      1 (str (color/fail "FAILURE:")
-                                             (format " %d fact was not confirmed." midje-fails#))
-                                      (str (color/fail "FAILURE:")
-                                           (format " %d facts were not confirmed." midje-fails#)))
-
-           potential-consolation# (condp = midje-passes#
-                                    0 ""
-                                    1 "(But 1 was.)"
-                                    (format "(But %d were.)" midje-passes#))
-
-           midje-consolation# (if (> midje-fails# 0) potential-consolation# "")
-
-           ; Stashed clojure.test output
-           ct-output-catcher# (java.io.StringWriter.)
-           ct-result# (binding [clojure.test/*test-out* ct-output-catcher#]
-                                  (apply ~'clojure.test/run-tests namespaces#))
-           ct-output# (-> ct-output-catcher#
-                                    .toString
-                                    clojure.string/split-lines)
-           ct-failures-and-errors# (+ (:fail ct-result#) (:error ct-result#))
-           ct-some-kind-of-fail?# (> ct-failures-and-errors# 0)]
-
-       (when ct-some-kind-of-fail?#
-         ;; For some reason, empty lines are swallowed, so I use >>> to
-         ;; demarcate sections.
-         (println (color/note ">>> Output from clojure.test tests:"))
-         (dorun (map (comp println color/colorize-deftest-output) 
-                     (drop-last 2 ct-output#))))
-
-       (when (> (:test ct-result#) 0)
-         (println (color/note ">>> clojure.test summary:"))
-         (println (first (take-last 2 ct-output#)))
-         (println ( (if ct-some-kind-of-fail?# color/fail color/pass) (last ct-output#)))
-         (println (color/note ">>> Midje summary:")))
-
-       (println midje-failure-message# midje-consolation#)
-
-       ;; A non-nil return value is printed, so I'll just exit here.
-       (when ~exit-after-tests?
-         (System/exit (+ midje-fails#
-                        (:error ct-result#)
-                        (:fail ct-result#)))))
-))
-
-(defn- append-classpath
-  "Inside eval-in-project leiningen 2 does not have plugin's own code on classpath.
-  We need it and must therefore add our own code to project classpath."
-  [project]
-  (update-in project [:dependencies]
-             conj ['lein-midje PLUGIN_VERSION]))
-
-(defn- append-lazy-deps
-  "Add lazytest dependencies to project classpath."
-  [project]
-  (update-in
-    (update-in project [:dependencies ] conj ['com.stuartsierra/lazytest "1.2.3"])
-    [:repositories ] conj ["stuart" {:url "http://stuartsierra.com/maven2"}]))
+(defn do-load-facts [project args]
+  (letfn [(prepare-arg [argstring]
+            (let [value (read-string argstring)]
+              (if (symbol? value)
+                `(quote ~value)
+                value)))]
+    (eval-in-project project
+                     `(System/exit (midje.repl/load-facts ~@(map prepare-arg args)))
+                     '(require 'midje.repl))))
 
 
+(defn do-autotest [project args]
+  (let [exec-form (if (empty? args)
+                    `(clojure.main/repl :init #(midje.repl/autotest))
+                    `(clojure.main/repl :init #(midje.repl/autotest :dirs [~@args])))]
+    (eval-in-project project
+                     exec-form
+                     `(use 'midje.repl))))
 
 (defn midje
   "Runs both Midje and clojure.test tests.
-  There are three ways to use this plugin:
+  There are two ways to use this plugin:
+
+  ** Run, then exit.
+
+  % lein midje
+  % lein midje myproj.util myproj.core.*
+  % lein midje myproj.run :integration
+
+  If no namespaces are given, it loads all namespaces in :source-paths
+  and :test-paths. (That will cause facts to be checked.)
+
+  If namespaces are given, only those named are loaded. Supports
+  simple wildcards, e.g. `lein midje myproj.util.*`, which will load all
+  namespaces within `myproj.util.foo`, `myproj.util.bar.baz`, etc.
+
+  In addition to namespaces, keywords may be given.
+  `lein midje ns :integration` will only check facts in `ns`
+  whose metadata marks them as integration tests. 
+
+  ** Autotest
   
-  `lein midje`
-  If no namespaces are given, runs tests in all 
-  namespaces in :source-path and :test-path
-  
-  `lein midje ns1 ns2 ns3`
-  Namespaces are looked up in both :source-path and :test-path.
-  Supports simple wildcards i.e. `lein midje ns.*` to use all subnamespaces of ns
-  
-  `lein midje --lazytest`
-  Runs tests in all :source-path and :test-path namespaces.  
-  Watches source and test namespaces, immediately running them 
-  when they change.
-  NOTE: Requires lazytest dev-dependency."
-  [project & lazytest-or-namespaces]
-  (let [project (append-classpath (merge-profiles project [:test]))
-        lazy-test-mode? (= "--lazytest" (first lazytest-or-namespaces)) 
-        paths (concat (:test-paths project) (:source-paths project))]
-    (if lazy-test-mode?
-      (eval-in-project
-       (append-lazy-deps project)
-       `(lazytest.watch/start '~paths
-                              :run-fn ~(make-run-fn)
-                              :report-fn ~(make-report-fn false))
-       '(require '[clojure walk template stacktrace test string set]
-                 '[leinmidje.midje-color :as color]
-                 '[lazytest watch]))
-      (eval-in-project
-       project
-       `(~(make-report-fn *exit-after-tests*) (apply ~(make-run-fn) (~(make-classpath-getter) '~lazytest-or-namespaces '~paths)))
-       '(require '[bultitude.core]
-                 '[clojure walk template stacktrace test string set]
-                 '[leinmidje.midje-color :as color])))))
+  % lein midje --autotest 
+  % lein midje --autotest test/midje/util src/midje/util
+
+  Starts a repl, uses `midje.repl`, and runs `(autotest)`.  The result
+  is that changes to any file in :source-paths and :test-paths cause
+  that file and all files that depend on it to be reloaded.
+
+  `--autotest` may be followed by arguments. They should be directory
+  pathnames relative to the project root. Only files in those
+  directories are scanned for changes. 
+
+  Since you are in a repl, you can pause and resume autotesting
+  with `(autotest :pause)` and `(autotest :resume)`. That is,
+  `lein midje --autotest` is basically a repl startup convenience.
+
+  For backwards compatibility, you can use `--lazytest` instead of `--autotest`.
+  "
+  [project & args]
+  (cond (empty? args)
+        (do-load-facts project [":all"])
+
+        (or (re-matches #"-*autotest" (first args))
+            (re-matches #"-*lazytest" (first args)))
+        (do-autotest project (rest args))
+
+        :else
+        (do-load-facts project args)))
+

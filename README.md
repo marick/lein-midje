@@ -2,14 +2,16 @@ Available via [clojars](http://clojars.org/search?q=lein-midje)
 For Leiningen 1: 1.0.10    
 For Leiningen 2: 2.0.3    
 
+Experimental version: 3.0-alpha1. This is for Leiningen 2,
+Midje 1.5-alpha5 or later, and Clojure 1.3 or later.
+[Here are instructions on installation and use.](https://github.com/marick/lein-midje/wiki/3.0-instructions)
+
 Purpose
 ==========
 
 This plugin runs both
 [Midje](https://github.com/marick/Midje) and clojure.test
-tests. The 1.x.x versions work with Leiningen 1, and the
-2.x.x versions work with Leiningen 2. All further
-development will be for Leiningen 2.
+tests. 
 
 
 Installation (Leiningen 2)
