@@ -2,26 +2,78 @@
 
 (ns leiningen.midje
   (:use [leiningen.core.eval :only [eval-in-project]])
-  (:require [leiningen.core.main :as main]))
+  (:require [leiningen.core.main :as main]
+            [clojure.set :as set]))
 
-(defn do-load-facts [project args]
-  (letfn [(prepare-arg [argstring]
-            (let [value (read-string argstring)]
-              (if (symbol? value)
-                `(quote ~value)
-                value)))]
-    (eval-in-project project
-                     `(System/exit (midje.repl/load-facts ~@(map prepare-arg args)))
-                     '(require 'midje.repl))))
+(defn make-load-facts-form [namespace-strings filters]
+  (let [true-namespaces (map (fn [nss] `(quote ~(symbol nss)))
+                             namespace-strings)
+        true-filters (map #(if (= (first %) \-)
+                             (complement (keyword (apply str (rest %))))
+                             (keyword %))
+                          filters)]
+    `(System/exit (midje.repl/load-facts
+                   ~@true-namespaces
+                   ~@true-filters))))
+
+(defn make-autotest-form [dirs]
+  (if (empty? dirs)
+    `(midje.repl/autotest)
+    `(midje.repl/autotest :dirs [~@dirs])))
+
+(defn make-init-form [config? filenames]
+  (let [filename-setter
+        `((require 'midje.util.ecosystem)
+          ((ns-resolve 'midje.util.ecosystem 'midje.util.ecosystem/set-config-files!)
+           '[~@filenames])
+          (require 'midje.config))]
+
+    `(do ~@(if config? filename-setter)
+         (require 'midje.repl))))
 
 
-(defn do-autotest [project args]
-  (let [exec-form (if (empty? args)
-                    `(midje.repl/autotest)
-                    `(midje.repl/autotest :dirs [~@args]))]
-    (eval-in-project project
-                     exec-form
-                     `(use 'midje.repl))))
+;; TODO: Jump one higher level to generate a parser
+;; and remove duplication below.
+
+(def compose comp)
+(def any? (comp boolean some))
+
+(def autotest-flag? #{":autotest" "--lazytest"})
+(def config-flag? #{":config"})
+(def filter-flag? #{":filter" ":filters"})
+(def flag? (set/union filter-flag? autotest-flag? config-flag?))
+
+(defn make-segment-pred [flag-predicate]
+  (compose boolean flag-predicate first))
+(defn make-arg-finder [segment-pred]
+  (compose second
+           (partial drop-while (complement segment-pred))))
+
+(def flag-segment? (make-segment-pred flag?))
+(def flag-args
+  (compose first
+           (partial take-while (complement flag-segment?))))
+
+(def autotest-segment? (make-segment-pred autotest-flag?))
+(def autotest-args (make-arg-finder autotest-segment?))
+
+(def config-segment? (make-segment-pred config-flag?))
+(def config-args (make-arg-finder config-segment?))
+
+(def filter-segment? (make-segment-pred filter-flag?))
+(def filter-args (make-arg-finder filter-segment?))
+
+(defn parse-args [arglist]
+  (let [arglist-segments (partition-by flag? arglist)]
+      
+      {:true-args (flag-args arglist-segments)
+       :autotest? (any? autotest-segment? arglist-segments)
+       :config? (any? config-segment? arglist-segments)
+       :filter? (any? filter-segment? arglist-segments)
+       
+       :autotest-args (autotest-args arglist-segments)
+       :config-args (config-args arglist-segments)
+       :filter-args (filter-args arglist-segments)}))
 
 (defn midje
   "Runs both Midje and clojure.test tests.
@@ -31,7 +83,7 @@
 
   % lein midje
   % lein midje myproj.util myproj.core.*
-  % lein midje myproj.run :integration
+  % lein midje myproj.excelsior :filter -slow timely
 
   If no namespaces are given, it loads all namespaces in :source-paths
   and :test-paths. (That will cause facts to be checked.)
@@ -40,33 +92,48 @@
   simple wildcards, e.g. `lein midje myproj.util.*`, which will load all
   namespaces within `myproj.util.foo`, `myproj.util.bar.baz`, etc.
 
-  In addition to namespaces, keywords may be given.
-  `lein midje ns :integration` will only check facts in `ns`
-  whose metadata marks them as integration tests. 
+  The :filter flag introduces one or more metadata filters that restrict
+  which tests are run. A plain token (like `timely`) selects facts
+  with a truthy value for the `:timely` key in their metadata.  A
+  negated token (like `-slow`) excludes facts *with* a truthy value
+  for the `:slow` key. Multiple tokens select facts that match any of
+  them.  Hence `:filter -slow timely` selects facts that are either
+  timely or not slow.
 
   ** Autotest
   
-  % lein midje --autotest 
-  % lein midje --autotest test/midje/util src/midje/util
+  % lein midje :autotest 
+  % lein midje :autotest test/midje/util src/midje/util
 
   Starts a repl, uses `midje.repl`, and runs `(autotest)`.  The result
   is that changes to any file in :source-paths and :test-paths cause
   that file and all files that depend on it to be reloaded.
 
-  `--autotest` may be followed by arguments. They should be directory
+  `:autotest` may be followed by arguments. They should be directory
   pathnames relative to the project root. Only files in those
   directories are scanned for changes. 
 
-  For backwards compatibility, you can use `--lazytest` instead of `--autotest`.
+  For backwards compatibility, you can use `--lazytest` instead of `:autotest`.
+
+  ** Changing configuration files.
+
+  By default, Midje reads configuration files in ${HOME}/.midje.clj
+  and <project>/.midje.clj (in that order) on startup. That can be
+  changed with the `:config` flag:
+
+  % lein midje :config ~/tmp/1 ~/tmp/2
+  % lein midje :autotest :config ~/tmp/1 ~/tmp/2
+
+  Note that `:autotest` with no arguments means that no
+  configuration files will be loaded. (It erases the defaults
+  and puts nothing in their place.)
   "
   [project & args]
-  (cond (empty? args)
-        (do-load-facts project [":all"])
-
-        (or (re-matches #"-*autotest" (first args))
-            (re-matches #"-*lazytest" (first args)))
-        (do-autotest project (rest args))
-
-        :else
-        (do-load-facts project args)))
-
+  (let [control-map (parse-args args)
+        init-form (make-init-form (:config? control-map)
+                                  (:config-args control-map))
+        exec-form (if (:autotest? control-map)
+                    (make-autotest-form (:autotest-args control-map))
+                    (make-load-facts-form (:true-args control-map)
+                                          (:filter-args control-map)))]
+    (eval-in-project project exec-form init-form)))

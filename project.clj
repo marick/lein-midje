@@ -1,9 +1,9 @@
-(defproject lein-midje/lein-midje "3.0-alpha1"
+(defproject lein-midje/lein-midje "3.0-alpha2"
   :description "Run Midje and clojure.test tests"
   :url "https://github.com/marick/lein-midje"
   :author "See README"
   :eval-in-leiningen true
-  :profiles {:dev {:dependencies [[midje "1.5-alpha5"]]}}
+  :profiles {:dev {:dependencies [[midje "1.5-alpha6"]]}}
   :license {:name "The MIT License (MIT)"
             :url "http://opensource.org/licenses/mit-license.php"
             :distribution :repo}
