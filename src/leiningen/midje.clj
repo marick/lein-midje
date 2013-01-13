@@ -12,9 +12,9 @@
                              (complement (keyword (apply str (rest %))))
                              (keyword %))
                           filters)]
-    `(System/exit (midje.repl/load-facts
-                   ~@true-namespaces
-                   ~@true-filters))))
+    `(System/exit (:failures (midje.repl/load-facts
+                              ~@true-namespaces
+                              ~@true-filters)))))
 
 (defn make-autotest-form [dirs]
   (if (empty? dirs)
