@@ -54,7 +54,6 @@
 (def flag-args
   (compose first
            (partial take-while (complement flag-segment?))))
-
 (def autotest-segment? (make-segment-pred autotest-flag?))
 (def autotest-args (make-arg-finder autotest-segment?))
 
@@ -125,7 +124,7 @@
   % lein midje :config ~/tmp/1 ~/tmp/2
   % lein midje :autotest :config ~/tmp/1 ~/tmp/2
 
-  Note that `:autotest` with no arguments means that no
+  Note that `:config` with no arguments means that no
   configuration files will be loaded. (It erases the defaults
   and puts nothing in their place.)
   "
