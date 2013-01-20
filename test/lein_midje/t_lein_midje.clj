@@ -40,23 +40,9 @@
     (:filter? result) => false)
   )
 
-(defmacro WRAPPER [body]
-  `'(java.lang.System/exit (:failures ~body)))
-(defn UNWRAP [wrapped]
-  (second (second wrapped)))
-
-(fact make-load-facts-form
-  (make-load-facts-form [] []) => (WRAPPER (midje.repl/load-facts))
-  (make-load-facts-form ["ns1"] []) => (WRAPPER (midje.repl/load-facts 'ns1))
-  (make-load-facts-form ["ns1" "ns2"] ["a"]) => (WRAPPER (midje.repl/load-facts 'ns1 'ns2 :a))
-
-  (let [generated-function (last (UNWRAP (make-load-facts-form ["ns1" "ns2"] ["-a"])))]
-    (generated-function {:a true}) => falsey
-    (generated-function {}) => truthy))
-  
 (fact make-autotest-form
   (make-autotest-form []) =>  '(midje.repl/autotest)
-  (make-autotest-form ["test/midje"]) =>  '(midje.repl/autotest :dirs ["test/midje"]))
+  (make-autotest-form ["test/midje"]) =>  '(midje.repl/autotest :dirs "test/midje"))
   
 (fact make-init-form
   (make-init-form false nil)
