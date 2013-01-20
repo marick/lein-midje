@@ -12,14 +12,15 @@
                              (complement (keyword (apply str (rest %))))
                              (keyword %))
                           filters)]
-    `(System/exit (:failures (midje.repl/load-facts
-                              ~@true-namespaces
-                              ~@true-filters)))))
+    `(System/exit (min 255
+                       (:failures (midje.repl/load-facts
+                                   ~@true-namespaces
+                                   ~@true-filters))))))
 
 (defn make-autotest-form [dirs]
   (if (empty? dirs)
     `(midje.repl/autotest)
-    `(midje.repl/autotest :dirs [~@dirs])))
+    `(midje.repl/autotest :dirs ~@dirs)))
 
 (defn make-init-form [config? filenames]
   (let [filename-setter
