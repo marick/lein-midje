@@ -22,14 +22,19 @@
     `(midje.repl/autotest)
     `(midje.repl/autotest :dirs ~@dirs)))
 
-(defn make-init-form [config? filenames]
-  (let [filename-setter
-        `((require 'midje.util.ecosystem)
-          ((ns-resolve 'midje.util.ecosystem 'midje.util.ecosystem/set-config-files!)
-           '[~@filenames])
-          (require 'midje.config))]
+(defn make-init-form [project config? config-filenames]
+  (let [config-filename-setter
+        `((ns-resolve 'midje.util.ecosystem 'midje.util.ecosystem/set-config-files!)
+          '[~@config-filenames])
+        leiningen-paths-setter
+        `((ns-resolve 'midje.util.ecosystem 'midje.util.ecosystem/set-leiningen-paths!)
+          '~project)
+          ]
 
-    `(do ~@(if config? filename-setter)
+    `(do (require 'midje.util.ecosystem)
+         ~(if config? config-filename-setter)
+         ~leiningen-paths-setter
+         (require 'midje.config)
          (require 'midje.repl))))
 
 
@@ -130,7 +135,8 @@
   "
   [project & args]
   (let [control-map (parse-args args)
-        init-form (make-init-form (:config? control-map)
+        init-form (make-init-form project
+                                  (:config? control-map)
                                   (:config-args control-map))
         exec-form (if (:autotest? control-map)
                     (make-autotest-form (:autotest-args control-map))
