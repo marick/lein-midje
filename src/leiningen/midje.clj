@@ -9,7 +9,7 @@
   (let [true-namespaces (map (fn [nss] `(quote ~(symbol nss)))
                              namespace-strings)
         true-filters (map #(if (= (first %) \-)
-                             (complement (keyword (apply str (rest %))))
+                             `(complement ~(keyword (apply str (rest %))))
                              (keyword %))
                           filters)]
     `(System/exit (min 255
