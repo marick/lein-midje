@@ -58,6 +58,6 @@
       result => common-setup
       result => #"set-config-files!.*\[\"config.1\"\s+\"config.2\"\]")))
 
-(fact "filters passed in"
+(fact :metadata "filters passed in"
   (pr-str (make-load-facts-form [] ["integration" "-slow"]))
   => #"load-facts :integration \(clojure.core/complement :slow\)")
