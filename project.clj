@@ -3,7 +3,7 @@
   :url "https://github.com/marick/lein-midje"
   :author "See README"
   :eval-in-leiningen true
-  :profiles {:dev {:dependencies [[midje "1.5-alpha6"]]}}
+  :profiles {:dev {:dependencies [[midje "1.5-alpha10"]]}}
   :license {:name "The MIT License (MIT)"
             :url "http://opensource.org/licenses/mit-license.php"
             :distribution :repo}
