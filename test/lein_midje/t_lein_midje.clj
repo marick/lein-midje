@@ -46,15 +46,14 @@
   
 (fact make-init-form
   (let [common-setup (every-checker (contains "require (quote midje.util.ecosystem))")
-                                    ;; deficiency: every-checker won't take a regex.
-                                    (contains "set-leiningen-paths") (contains "quote ..project-map..")
+                                    #"set-leiningen-paths.*quote --project-map--"
                                     (contains "require (quote midje.config)")
                                     (contains "require (quote midje.repl)"))]
-    (let [result (pr-str (make-init-form ..project-map.. false nil))]
+    (let [result (pr-str (make-init-form --project-map-- false nil))]
       result => common-setup
       result =not=> (contains "set-config-files!"))
 
-    (let [result (pr-str (make-init-form ..project-map.. true ["config.1" "config.2"]))]
+    (let [result (pr-str (make-init-form --project-map-- true ["config.1" "config.2"]))]
       result => common-setup
       result => #"set-config-files!.*\[\"config.1\"\s+\"config.2\"\]")))
 
