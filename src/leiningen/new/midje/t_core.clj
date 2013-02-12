@@ -1,9 +1,10 @@
 (ns {{sanitized}}.t-core
   (:use midje.sweet)
-  (:require [{{sanitized}}.core :as core]))
+  (:use [{{sanitized}}.core]))
 
-(fact "There are many ways to be wrong about 2+2."
-  (+ 2 2) => 5
-  (+ 2 2) => odd?
-  (+ 2 2) => (roughly 10)
-  (+ 2 2) => core/equals-five?)
+;;; Note: this fact will not check out.
+(fact "There exist numbers such that (+ n n) is equal to (* n n)."
+  (+ 0 0) => (* 0 0)
+  (+ 2 2) => (* 2 2)
+  (+ 4 4) => (* 4 4))
+
