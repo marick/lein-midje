@@ -24,10 +24,26 @@
     (:config? result) => false
     (:filter? result) => false)
 
+  (let [result (parse-args [":autotest" ":filter" "integration"])]
+    (:true-args result) => empty?
+    (:autotest? result) => true
+    (:autotest-args result) => empty?
+    (:config? result) => false
+    (:filter? result) => true
+    (:filter-args result) => ["integration"])
+
   (let [result (parse-args ["ns1" "ns2" ":filter" "n" "-n2"])]
     (:true-args result) => ["ns1" "ns2"]
     (:autotest? result) => false
     (:config? result) => false
+    (:filter? result) => true
+    (:filter-args result) => ["n" "-n2"])
+
+  (let [result (parse-args [":config" ":filter" "n" "-n2"])]
+    (:true-args result) => empty?
+    (:autotest? result) => false
+    (:config? result) => true
+    (:config-args result) => empty?
     (:filter? result) => true
     (:filter-args result) => ["n" "-n2"])
 

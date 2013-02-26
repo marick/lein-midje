@@ -52,21 +52,22 @@
 
 (defn make-segment-pred [flag-predicate]
   (compose boolean flag-predicate first))
-(defn make-arg-finder [segment-pred]
-  (compose second
-           (partial drop-while (complement segment-pred))))
-
 (def flag-segment? (make-segment-pred flag?))
+(def autotest-segment? (make-segment-pred autotest-flag?))
+(def config-segment? (make-segment-pred config-flag?))
+(def filter-segment? (make-segment-pred filter-flag?))
+
 (def flag-args
   (compose first
            (partial take-while (complement flag-segment?))))
-(def autotest-segment? (make-segment-pred autotest-flag?))
+
+(defn make-arg-finder [segment-pred]
+  (fn [segments]
+    (let [after-segment (second (drop-while (complement segment-pred) segments))]
+      (when-not (flag-segment? after-segment)
+        after-segment))))
 (def autotest-args (make-arg-finder autotest-segment?))
-
-(def config-segment? (make-segment-pred config-flag?))
 (def config-args (make-arg-finder config-segment?))
-
-(def filter-segment? (make-segment-pred filter-flag?))
 (def filter-args (make-arg-finder filter-segment?))
 
 (defn parse-args [arglist]
