@@ -5,22 +5,23 @@
   (:require [leiningen.core.main :as main]
             [clojure.set :as set]))
 
+(defn repl-style-filters [filters]
+  (map #(if (= (first %) \-)
+          `(complement ~(keyword (apply str (rest %))))
+          (keyword %))
+       filters))
+
 (defn make-load-facts-form [namespace-strings filters]
   (let [true-namespaces (map (fn [nss] `(quote ~(symbol nss)))
-                             namespace-strings)
-        true-filters (map #(if (= (first %) \-)
-                             `(complement ~(keyword (apply str (rest %))))
-                             (keyword %))
-                          filters)]
+                             namespace-strings)]
     `(System/exit (min 255
-                       (:failures (midje.repl/load-facts
-                                   ~@true-namespaces
-                                   ~@true-filters))))))
+                       (:failures (midje.repl/load-facts ~@true-namespaces
+                                                         ~@(repl-style-filters filters)))))))
 
-(defn make-autotest-form [dirs]
-  (if (empty? dirs)
-    `(midje.repl/autotest)
-    `(midje.repl/autotest :dirs ~@dirs)))
+(defn make-autotest-form [dirs filters]
+  ;; Note: filters with an empty arglist means "use the default".
+  (let [dir-args (if (empty? dirs) [] (cons :dirs dirs))]
+    `(midje.repl/autotest  ~@dir-args :filters ~@(repl-style-filters filters))))
 
 (defn make-init-form [project config? config-filenames]
   (let [config-filename-setter
@@ -84,6 +85,7 @@
   "Runs both Midje and clojure.test tests.
   There are two ways to use this plugin:
 
+
   ** Run, then exit.
 
   % lein midje
@@ -105,6 +107,7 @@
   them.  Hence `:filter -slow timely` selects facts that are either
   timely or not slow.
 
+
   ** Autotest
   
   % lein midje :autotest 
@@ -116,9 +119,15 @@
 
   `:autotest` may be followed by arguments. They should be directory
   pathnames relative to the project root. Only files in those
-  directories are scanned for changes. 
+  directories are scanned for changes.
+
+  Autotest may also take a `:filter` flag with the same sort of arguments
+  as in the non-autotest case:
+
+  % lein midje :autotest :filter -slow timely
 
   For backwards compatibility, you can use `--lazytest` instead of `:autotest`.
+
 
   ** Changing configuration files.
 
@@ -139,7 +148,8 @@
                                   (:config? control-map)
                                   (:config-args control-map))
         exec-form (if (:autotest? control-map)
-                    (make-autotest-form (:autotest-args control-map))
+                    (make-autotest-form (:autotest-args control-map)
+                                        (:filter-args control-map))
                     (make-load-facts-form (:true-args control-map)
                                           (:filter-args control-map)))]
     (eval-in-project project exec-form init-form)))

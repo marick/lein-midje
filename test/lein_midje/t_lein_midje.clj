@@ -41,8 +41,10 @@
   )
 
 (fact make-autotest-form
-  (make-autotest-form []) => '(midje.repl/autotest)
-  (make-autotest-form ["test/midje"]) =>  '(midje.repl/autotest :dirs "test/midje"))
+  (make-autotest-form [] []) => '(midje.repl/autotest :filters)
+  (make-autotest-form ["test/midje"] []) =>  '(midje.repl/autotest :dirs "test/midje" :filters)
+  (make-autotest-form [] ["integration"]) => '(midje.repl/autotest :filters :integration)
+  (make-autotest-form ["test/midje"] ["-integration"]) =>  `(midje.repl/autotest :dirs "test/midje" :filters (complement :integration)))
   
 (fact make-init-form
   (let [common-setup (every-checker (contains "require (quote midje.util.ecosystem))")
