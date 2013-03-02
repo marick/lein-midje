@@ -1,9 +1,7 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)   
 For Leiningen 1: 1.0.10    
-For Leiningen 2: 2.0.4       
-
-Experimental version: 3.0-beta1. It requires Midje 1.5-beta1 or later    
-[Here are instructions on installation and use.](https://github.com/marick/lein-midje/wiki/3.0-instructions)
+For Leiningen 2: 2.0.4
+Next version: 3.0-RC1. It requires Midje 1.5-RC1 or later    
 
 Purpose
 ==========
@@ -13,31 +11,17 @@ This plugin runs both
 tests. 
 
 
-Installation (Leiningen 2)
+Installation
 ==========
 
 `lein-midje` is a plugin, so add this to your
 `~/.lein/profiles.clj`:
 
-    {:user {:plugins [[lein-midje "2.X.X"]]}}
+    {:user {:plugins [[lein-midje "3.0.0"]]}}b
 
 Or you can include it in your `project.clj`:
 
-    {:profiles {:dev {:plugins [[lein-midje "2.X.X"]]}}}
-
-Installation (Leiningen 1)
-==========
-
-`lein-midje` is available as a plugin:
-
-      $ lein plugin install lein-midje 1.0.10  ;; Leiningen 1
-
-[Note: for reasons unknown, you may need to first uninstall
-earlier versions.]
-
-Or you can include it in your `project.clj`:
-
-      :dev-dependencies [[lein-midje "1.0.10"]] ;; Leiningen 1
+    {:profiles {:dev {:plugins [[lein-midje "3.0.0"]]}}}
 
 Use
 ==========
@@ -62,17 +46,11 @@ recursively included within it.
 To run `lein-midje` as a watcher process that reloads any
 changed test files, use this:
 
-       $ lein midje --lazytest
+       $ lein midje :autotest
 
-For Leiningen 1 (NOT 2) the dependency and the repository must be added to your project.
-
-Dependency:
-
-      [com.stuartsierra/lazytest "1.2.3"]
-
-Stuart Sierra's repo:
-
-      :repositories {"stuart" "http://stuartsierra.com/maven2"}
+See the [Midje
+documentation](https://github.com/marick/Midje/wiki/Lein-midje)
+for more.
 
 Environment Variables
 ==============
