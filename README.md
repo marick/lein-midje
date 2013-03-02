@@ -17,7 +17,7 @@ Installation
 `lein-midje` is a plugin, so add this to your
 `~/.lein/profiles.clj`:
 
-    {:user {:plugins [[lein-midje "3.0.0"]]}}b
+    {:user {:plugins [[lein-midje "3.0.0"]]}}
 
 Or you can include it in your `project.clj`:
 
