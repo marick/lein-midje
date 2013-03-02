@@ -8,7 +8,7 @@
   (println (format "It looks like '%s' already exists." (str name))
            "To begin using Midje, add this dev dependency to your project.clj:"
            ""
-           "   :profiles {:dev {:dependencies [[midje \"1.5-beta1\"]]}}"
+           "   :profiles {:dev {:dependencies [[midje \"1.5.0\"]]}}"
            ""
            (format "You'll find a sample test file in %s." 
 
