@@ -78,6 +78,7 @@ Contributors
 
 * Alex Baranosky
 * Andreas Wurzer
+* Bjarte Johansen
 * Brian Marick
 * Dmitri Naumov
 * Mark Simpson
