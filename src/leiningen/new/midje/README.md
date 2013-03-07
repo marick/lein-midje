@@ -1,6 +1,6 @@
 # {{name}}
 
-The project uses [Midje](https://github.com/marick/Midje/)).
+The project uses [Midje](https://github.com/marick/Midje/).
 
 ## How to run the tests
 
