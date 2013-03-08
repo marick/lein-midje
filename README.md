@@ -1,7 +1,8 @@
-Available via [clojars](http://clojars.org/search?q=lein-midje)   
-For Leiningen 1: 1.0.10    
-For Leiningen 2: 2.0.4
-Next version: 3.0-RC1. It requires Midje 1.5-RC1 or later    
+Available via [clojars](http://clojars.org/search?q=lein-midje)
+Production version: 3.0.0 (requires Midje 1.5 or later)
+Legacy versions:
+* 2.0.4: Leiningen 2 and Midje 1.4
+* 1.0.10: Leiningen 1
 
 Purpose
 ==========
