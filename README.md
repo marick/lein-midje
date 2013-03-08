@@ -1,6 +1,6 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)    
 Production version: 3.0.0 (requires Midje 1.5 or later)    
-Legacy versions:
+Legacy versions:    
 * 2.0.4: Leiningen 2 and Midje 1.4
 * 1.0.10: Leiningen 1
 
@@ -84,7 +84,7 @@ Contributors
 * Dmitri Naumov
 * Mark Simpson
 * Matt Mitchell
-* Sam Richie
+* Sam Ritchie
 * Sebastian Hennebrueder
 * Teemu Antti-Poika
 * Timo Mihaljov
