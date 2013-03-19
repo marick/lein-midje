@@ -115,12 +115,12 @@
   % lein midje :autotest test/midje/util src/midje/util
 
   Starts a repl, uses `midje.repl`, and runs `(autotest)`.  The result
-  is that changes to any file in :source-paths and :test-paths cause
+  is that changes to any file in :source-paths or :test-paths cause
   that file and all files that depend on it to be reloaded.
 
-  `:autotest` may be followed by arguments. They should be directory
-  pathnames relative to the project root. Only files in those
-  directories are scanned for changes.
+  `:autotest` may be followed by arguments. They should be file or
+  directory pathnames relative to the project root. Only named files
+  or files in named directories will be scanned for changes.
 
   Autotest may also take a `:filter` flag with the same sort of arguments
   as in the non-autotest case:
