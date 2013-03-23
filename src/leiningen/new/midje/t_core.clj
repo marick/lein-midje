@@ -1,6 +1,6 @@
-(ns {{sanitized}}.t-core
+(ns {{name}}.t-core
   (:use midje.sweet)
-  (:use [{{sanitized}}.core]))
+  (:use [{{name}}.core]))
 
 (facts "about `first-element`"
   (fact "it normally returns the first element"
