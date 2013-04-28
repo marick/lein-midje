@@ -84,8 +84,11 @@
 
 (defn midje
   "Runs both Midje and clojure.test tests.
-  There are two ways to use this plugin:
 
+  NOTE: all the features `lein midje` provides are also available in the
+  repl. For most purposes, the in-repl versions are more convenient.
+
+  There are two ways to use this plugin:
 
   ** Run, then exit.
 
