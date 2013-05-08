@@ -81,6 +81,7 @@ Contributors
 * Andreas Wurzer
 * Bjarte Johansen
 * Brian Marick
+* Bruce Durling
 * Dmitri Naumov
 * Mark Simpson
 * Matt Mitchell
