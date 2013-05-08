@@ -87,6 +87,7 @@
 
   NOTE: all the features `lein midje` provides are also available in the
   repl. For most purposes, the in-repl versions are more convenient.
+  See https://github.com/marick/Midje/wiki/Repl-tools
 
   There are two ways to use this plugin:
 
@@ -131,6 +132,9 @@
   % lein midje :autotest :filter -slow timely
 
   For backwards compatibility, you can use `--lazytest` instead of `:autotest`.
+
+  Note: Midje also allows you to run autotest from a repl. That's often more
+  convenient. See https://github.com/marick/Midje/wiki/Repl-tools
 
 
   ** Changing configuration files.
