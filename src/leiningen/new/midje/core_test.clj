@@ -1,4 +1,4 @@
-(ns {{name}}.t-core
+(ns {{name}}.core-test
   (:use midje.sweet)
   (:use [{{name}}.core]))
 

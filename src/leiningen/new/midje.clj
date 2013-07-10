@@ -28,7 +28,7 @@
       ["project.clj" (render "project.clj" data)]
       ["README.md" (render "README.md" data)]
       ["src/{{sanitized}}/core.clj" (render "core.clj" data)]
-      ["test/{{sanitized}}/t_core.clj" (render "t_core.clj" data)])))
+      ["test/{{sanitized}}/core_test.clj" (render "core_test.clj" data)])))
 
 (defn midje
   "Creates a template project for doing TDD with Clojure."
