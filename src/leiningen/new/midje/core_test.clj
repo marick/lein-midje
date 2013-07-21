@@ -2,6 +2,8 @@
   (:use midje.sweet)
   (:use [{{name}}.core]))
 
+(println "You sbould expect to see three failures below.")
+
 (facts "about `first-element`"
   (fact "it normally returns the first element"
     (first-element [1 2 3] :default) => 1
