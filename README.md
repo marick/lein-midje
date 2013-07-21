@@ -1,5 +1,5 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)    
-Production version: 3.0.1 (requires Midje 1.5 or later)    
+Production version: 3.1.0 (requires Midje 1.5 or later)    
 Legacy versions:    
 * 2.0.4: Leiningen 2 and Midje 1.4
 * 1.0.10: Leiningen 1
@@ -18,11 +18,11 @@ Installation
 `lein-midje` is a plugin, so add this to your
 `~/.lein/profiles.clj`:
 
-    {:user {:plugins [[lein-midje "3.0.1"]]}}
+    {:user {:plugins [[lein-midje "3.1.0"]]}}
 
 Or you can include it in your `project.clj`:
 
-    {:profiles {:dev {:plugins [[lein-midje "3.0.1"]]}}}
+    {:profiles {:dev {:plugins [[lein-midje "3.1.0"]]}}}
 
 Use
 ==========
@@ -78,6 +78,7 @@ Contributors
 ==========
 
 * Alex Baranosky
+* Andreas Liljeqvist
 * Andreas Wurzer
 * Bjarte Johansen
 * Brian Marick
