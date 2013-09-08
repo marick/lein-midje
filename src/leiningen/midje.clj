@@ -14,9 +14,10 @@
 (defn make-load-facts-form [namespace-strings filters]
   (let [true-namespaces (map (fn [nss] `(quote ~(symbol nss)))
                              namespace-strings)]
-    `(System/exit (min 255
-                       (:failures (midje.repl/load-facts ~@true-namespaces
-                                                         ~@(repl-style-filters filters)))))))
+    `(let [failures# (:failures (midje.repl/load-facts ~@true-namespaces
+                                                       ~@(repl-style-filters filters)))]
+       (when-not (zero? failures#) 
+         (main/exit 255)))))
 
 (defn make-autotest-form [dirs filters]
   ;; Note: filters with an empty arglist means "use the default".
