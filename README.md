@@ -18,11 +18,11 @@ Installation
 `lein-midje` is a plugin, so add this to your
 `~/.lein/profiles.clj`:
 
-    {:user {:plugins [[lein-midje "3.1.0"]]}}
+    {:user {:plugins [[lein-midje "3.1.2"]]}}
 
 Or you can include it in your `project.clj`:
 
-    {:profiles {:dev {:plugins [[lein-midje "3.1.0"]]}}}
+    {:profiles {:dev {:plugins [[lein-midje "3.1.2"]]}}}
 
 Use
 ==========
@@ -91,3 +91,4 @@ Contributors
 * Teemu Antti-Poika
 * Timo Mihaljov      
 * Wes Morgan
+* Yannick Scherer
