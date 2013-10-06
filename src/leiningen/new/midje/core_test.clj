@@ -2,7 +2,7 @@
   (:use midje.sweet)
   (:use [{{name}}.core]))
 
-(println "You sbould expect to see three failures below.")
+(println "You should expect to see three failures below.")
 
 (facts "about `first-element`"
   (fact "it normally returns the first element"
