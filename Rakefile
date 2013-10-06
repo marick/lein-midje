@@ -7,6 +7,7 @@ def jar_name
   text = File.read('project.clj')
   unless /lein-midje\s+"(\d+\.\d+\.\d+)"/ =~ text ||
          /lein-midje\s+"(\d+\.\d+(-RC\d+)?)"/ =~ text ||
+         /lein-midje\s+"(\d+\.\d+.\d+(-RC\d+)?)"/ =~ text ||
          /lein-midje\s+"(\d+\.\d-alpha\d)"/ =~ text || 
          /lein-midje\s+"(\d+\.\d-beta\d)"/ =~ text ||
          /lein-midje\s+"(\d+\.\d-SNAPSHOT)"/ =~ text
