@@ -1,5 +1,6 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)    
 Production version: 3.1.1 (requires Midje 1.5 or later)    
+Experimental version: 3.1.3-RC1 (requires Midje 1.5 or later)    
 Legacy versions:    
 * 2.0.4: Leiningen 2 and Midje 1.4
 * 1.0.10: Leiningen 1
