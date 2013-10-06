@@ -11,13 +11,17 @@
           (keyword %))
        filters))
 
-(defn make-load-facts-form [namespace-strings filters]
+(defn make-load-facts-form [project namespace-strings filters]
   (let [true-namespaces (map (fn [nss] `(quote ~(symbol nss)))
-                             namespace-strings)]
+                             namespace-strings)
+        exit-fn (if (or (:eval-in-leiningen project) 
+                        (= (:eval-in project) :leiningen))
+                  `main/exit
+                  `System/exit)]
     `(let [failures# (:failures (midje.repl/load-facts ~@true-namespaces
                                                        ~@(repl-style-filters filters)))]
        (when-not (zero? failures#) 
-         (main/exit 255)))))
+         (~exit-fn (min 255 failures#))))))
 
 (defn make-autotest-form [dirs filters]
   ;; Note: filters with an empty arglist means "use the default".
@@ -159,6 +163,7 @@
         exec-form (if (:autotest? control-map)
                     (make-autotest-form (:autotest-args control-map)
                                         (:filter-args control-map))
-                    (make-load-facts-form (:true-args control-map)
+                    (make-load-facts-form project
+                                          (:true-args control-map)
                                           (:filter-args control-map)))]
     (eval-in-project project exec-form init-form)))
