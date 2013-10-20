@@ -20,8 +20,7 @@
                   `System/exit)]
     `(let [failures# (:failures (midje.repl/load-facts ~@true-namespaces
                                                        ~@(repl-style-filters filters)))]
-       (when-not (zero? failures#) 
-         (~exit-fn (min 255 failures#))))))
+       (~exit-fn (min 255 failures#)))))
 
 (defn make-autotest-form [dirs filters]
   ;; Note: filters with an empty arglist means "use the default".
