@@ -18,11 +18,18 @@ Installation
 `lein-midje` is a plugin, so add this to your
 `~/.lein/profiles.clj`:
 
-    {:user {:plugins [[lein-midje "3.1.1"]]}}
+    {:user {:plugins [[lein-midje "3.1.3"]]}}
 
 Or you can include it in your `project.clj`:
 
-    {:profiles {:dev {:plugins [[lein-midje "3.1.1"]]}}}
+    {:profiles {:dev {:plugins [[lein-midje "3.1.3"]]}}}
+
+`lein-midje` depends on `midje` itself. If you don't already have `midje` in your `project.clj`, you'll need to add it.
+For example, you could use this in place of the profiles above:
+
+    {:profiles {:dev {:dependencies [[midje "1.6.0" :exclusions [org.clojure/clojure]]]
+                      :plugins [[lein-midje "3.1.3"]]}}}
+
 
 Use
 ==========
