@@ -1,6 +1,6 @@
 (ns lein-midje.t-lein-midje
-  (:use midje.sweet
-        leiningen.midje))
+  (:require [midje.sweet :refer :all]
+            [leiningen.midje :refer :all]))
 
 (fact "flags can be parsed from an arglist"
   :has-metadata

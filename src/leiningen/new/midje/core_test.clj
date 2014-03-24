@@ -1,6 +1,6 @@
 (ns {{name}}.core-test
-  (:use midje.sweet)
-  (:use [{{name}}.core]))
+  (:require [midje.sweet :refer :all]
+            [{{name}}.core :refer :all]))
 
 (println "You should expect to see three failures below.")
 

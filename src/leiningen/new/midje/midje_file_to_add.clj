@@ -1,5 +1,5 @@
 (ns {{sanitized}}.midje
-  (:use [midje.sweet]))
+  (:require [midje.sweet :refer :all]))
 
 (fact (+ 2 2) => 5)
 (fact (+ 2 2) => odd?)

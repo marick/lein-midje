@@ -1,8 +1,8 @@
 ;; -*- indent-tabs-mode: nil -*-
 
 (ns leiningen.midje
-  (:use [leiningen.core.eval :only [eval-in-project]])
   (:require [leiningen.core.main :as main]
+            [leiningen.core.eval :refer [eval-in-project]]
             [clojure.set :as set]))
 
 (defn repl-style-filters [filters]
