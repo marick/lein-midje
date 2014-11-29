@@ -10,7 +10,8 @@ def jar_name
          /lein-midje\s+"(\d+\.\d+.\d+(-RC\d+)?)"/ =~ text ||
          /lein-midje\s+"(\d+\.\d-alpha\d)"/ =~ text || 
          /lein-midje\s+"(\d+\.\d-beta\d)"/ =~ text ||
-         /lein-midje\s+"(\d+\.\d-SNAPSHOT)"/ =~ text
+         /lein-midje\s+"(\d+\.\d-SNAPSHOT)"/ =~ text ||
+         /lein-midje\s+"(\d+\.\d\.\d-SNAPSHOT)"/ =~ text
     puts "Couldn't find version in project file."
     exit 1
   end
