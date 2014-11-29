@@ -91,7 +91,9 @@ Contributors
 * Bobby Norton
 * Brian Marick
 * Bruce Durling
+* Derek Passen
 * Dmitri Naumov
+* Eric Evans
 * Mark Simpson
 * Matt Mitchell
 * Sam Ritchie
