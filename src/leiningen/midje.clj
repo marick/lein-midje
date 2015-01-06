@@ -3,6 +3,7 @@
 (ns leiningen.midje
   (:require [leiningen.core.main :as main]
             [leiningen.core.eval :refer [eval-in-project]]
+            [leiningen.core.project :as project]
             [clojure.set :as set]))
 
 (defn repl-style-filters [filters]
@@ -14,7 +15,7 @@
 (defn make-load-facts-form [project namespace-strings filters]
   (let [true-namespaces (map (fn [nss] `(quote ~(symbol nss)))
                              namespace-strings)
-        exit-fn (if (or (:eval-in-leiningen project) 
+        exit-fn (if (or (:eval-in-leiningen project)
                         (= (:eval-in project) :leiningen))
                   `main/exit
                   `System/exit)]
@@ -76,12 +77,12 @@
 
 (defn parse-args [arglist]
   (let [arglist-segments (partition-by flag? arglist)]
-      
+
       {:true-args (flag-args arglist-segments)
        :autotest? (any? autotest-segment? arglist-segments)
        :config? (any? config-segment? arglist-segments)
        :filter? (any? filter-segment? arglist-segments)
-       
+
        :autotest-args (autotest-args arglist-segments)
        :config-args (config-args arglist-segments)
        :filter-args (filter-args arglist-segments)}))
@@ -118,8 +119,8 @@
 
 
   ** Autotest
-  
-  % lein midje :autotest 
+
+  % lein midje :autotest
   % lein midje :autotest test/midje/util src/midje/util
 
   Starts a repl, uses `midje.repl`, and runs `(autotest)`.  The result
@@ -156,6 +157,7 @@
   "
   [project & args]
   (let [control-map (parse-args args)
+        project (project/merge-profiles project [:midje])
         init-form (make-init-form project
                                   (:config? control-map)
                                   (:config-args control-map))
