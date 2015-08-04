@@ -1,8 +1,6 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)    
 Production version: 3.1.3 (requires Midje 1.5 or later)    
-Legacy versions:    
-* 2.0.4: Leiningen 2 and Midje 1.4
-* 1.0.10: Leiningen 1
+Next version: 3.2-RC1     
 
 Purpose
 ==========
@@ -60,7 +58,7 @@ See the [Midje
 documentation](https://github.com/marick/Midje/wiki/Lein-midje)
 for more.
 
-Environment Variables
+Environment Variables and Profiles
 ==============
 
 On Unix systems, colorizing of results is turned on by default. It can be
@@ -81,6 +79,8 @@ you might prefer this:
 
 It colors the background instead of the letters.
 
+`lein-midje` obeys the `:midje` profile.
+
 Contributors
 ==========
 
@@ -93,12 +93,14 @@ Contributors
 * Bruce Durling
 * Derek Passen
 * Dmitri Naumov
+* elarkin
 * Eric Evans
 * Mark Simpson
 * Matt Mitchell
 * Sam Ritchie
 * Sebastian Hennebrueder
 * Teemu Antti-Poika
-* Timo Mihaljov      
+* Timo Mihaljov
+* Tomoharu Fujita
 * Wes Morgan
 * Yannick Scherer
