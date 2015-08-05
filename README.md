@@ -1,6 +1,6 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)    
 Production version: 3.1.3 (requires Midje 1.5 or later)    
-Next version: 3.2-RC1     
+Next version: 3.2-RC4     
 
 Purpose
 ==========
