@@ -1,4 +1,5 @@
-## [Tentative 3.2 release][Tentative 3.2 release]
+<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;"># Change Log
+## [Tentative 3.2 release]
 
 ### Added
 - Will merge in a `:midje` profile if it exists.
