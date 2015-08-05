@@ -11,3 +11,4 @@ semantic.cache
 *.idea
 .lein-*
 target
+pom.xml.asc
