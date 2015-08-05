@@ -13,7 +13,8 @@
            (format "You'll find a sample test file in %s." 
 
                 " Going to add files to make transitioning to Midje easier" "test/{{sanitized}}/midje.clj"))
-  (let [data {:name name :sanitized (new/sanitize name) :nested-dirs (new/name-to-path main-ns)}
+  (let [main-ns (new/sanitize name)
+        data {:name name :sanitized main-ns :nested-dirs (new/name-to-path main-ns)}
         paths [["test/{{nested-dirs}}/midje.clj" (render "midje_file_to_add.clj" data)]]]
       (doseq [path paths]
         (let [[path content] path
@@ -23,7 +24,8 @@
 
 (defn- create-new-project [name]
   (println (format "Generating a project called '%s' based on the 'midje' template." (str name)))
-  (let [data {:name name :sanitized (new/sanitize name) :nested-dirs (new/name-to-path main-ns)}]
+  (let [main-ns (new/sanitize name)
+        data {:name name :sanitized main-ns :nested-dirs (new/name-to-path main-ns)}]
     (new/->files data
       ["project.clj" (render "project.clj" data)]
       ["README.md" (render "README.md" data)]

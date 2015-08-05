@@ -156,7 +156,6 @@
   and puts nothing in their place.)
   "
   [project & args]
-  (prn (meta project))
   (let [control-map (parse-args args)
         project (if (get-in project [:profiles :midje])
                   (project/merge-profiles project [:midje])
