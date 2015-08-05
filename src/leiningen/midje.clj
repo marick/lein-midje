@@ -156,8 +156,11 @@
   and puts nothing in their place.)
   "
   [project & args]
+  (prn (meta project))
   (let [control-map (parse-args args)
-        project (project/merge-profiles project [:midje])
+        project (if (get-in project [:profiles :midje])
+                  (project/merge-profiles project [:midje])
+                  project)
         init-form (make-init-form project
                                   (:config? control-map)
                                   (:config-args control-map))
