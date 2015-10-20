@@ -1,0 +1,5 @@
+* Bump version in project, readme, changelog
+* lein ancient
+* push
+* lein deploy
+* lein install
