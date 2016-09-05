@@ -94,6 +94,7 @@ Contributors
 * Dmitri Naumov
 * elarkin
 * Eric Evans
+* Jacob Strength
 * Mark Simpson
 * Matt Mitchell
 * Sam Ritchie
