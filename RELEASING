@@ -1,5 +1,6 @@
 * Bump version in project, readme, changelog
 * lein ancient
 * push
+* Check readme and changelog
 * lein deploy
 * lein install

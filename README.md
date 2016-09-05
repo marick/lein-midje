@@ -1,5 +1,5 @@
 Available via [clojars](http://clojars.org/search?q=lein-midje)    
-Production version: 3.2 (requires Midje 1.5 or later)
+Production version: 3.2.1 (requires Midje 1.5 or later)
 
 Purpose
 ==========
@@ -15,17 +15,17 @@ Installation
 `lein-midje` is a plugin, so add this to your
 `~/.lein/profiles.clj`:
 
-    {:user {:plugins [[lein-midje "3.1.3"]]}}
+    {:user {:plugins [[lein-midje "3.2.1"]]}}
 
 Or you can include it in your `project.clj`:
 
-    {:profiles {:dev {:plugins [[lein-midje "3.1.3"]]}}}
+    {:profiles {:dev {:plugins [[lein-midje "3.2.1"]]}}}
 
 `lein-midje` depends on `midje` itself. If you don't already have `midje` in your `project.clj`, you'll need to add it.
 For example, you could use this in place of the profiles above:
 
     {:profiles {:dev {:dependencies [[midje "1.6.0" :exclusions [org.clojure/clojure]]]
-                      :plugins [[lein-midje "3.1.3"]]}}}
+                      :plugins [[lein-midje "3.2.1"]]}}}
 
 
 Use

@@ -6,6 +6,7 @@
             [leiningen.core.project :as project]
             [clojure.set :as set]))
 
+
 (defn repl-style-filters [filters]
   (map #(if (= (first %) \-)
           `(complement ~(keyword (apply str (rest %))))
@@ -32,9 +33,14 @@
   (let [config-filename-setter
         `((ns-resolve 'midje.util.ecosystem 'midje.util.ecosystem/set-config-files!)
           '[~@config-filenames])
+        ;; Leiningen now allows "raw" functions within the project map.
+        ;; They can't be quoted because they're printed in the `#record[...]`
+        ;; format. Note that this won't work if paths are calculated rather
+        ;; than being constant. Kludge upon kludge.
+        only-path-keys (select-keys project [:test-paths :source-paths])
         leiningen-paths-setter
         `((ns-resolve 'midje.util.ecosystem 'midje.util.ecosystem/set-leiningen-paths!)
-          '~project)
+          '~only-path-keys)
           ]
 
     `(do (require 'midje.util.ecosystem)
