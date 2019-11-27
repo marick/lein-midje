@@ -4,7 +4,8 @@
   (:require [leiningen.core.main :as main]
             [leiningen.core.eval :refer [eval-in-project]]
             [leiningen.core.project :as project]
-            [clojure.set :as set]))
+            [clojure.set :as set])
+  (:refer-clojure :exclude [any?]))
 
 
 (defn repl-style-filters [filters]
